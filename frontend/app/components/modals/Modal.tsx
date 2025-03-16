@@ -88,6 +88,7 @@ const Modal: React.FC<ModalProps> = ({
 
                 `}>
                     <div className="
+                    mt-[15%]
                     translate
                     h-full
                     lg:h-auto
