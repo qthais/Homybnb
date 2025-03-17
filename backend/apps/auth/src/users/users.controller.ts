@@ -8,27 +8,48 @@ export class UsersController implements UserServiceController {
   constructor(private readonly usersService: UsersService) {}
 
   async createUser(createUserDto: CreateUserDto) {
-    return await this.usersService.create(createUserDto);
+    try{
+      return await this.usersService.create(createUserDto);
+    }catch(error){
+      console.error('🔥 gRPC Error in createUser:', error);
+      throw error; // Let gRPC handle it
+    }
   }
 
   // ✅ Find All Users
   async findAllUsers() {
-    return await this.usersService.findAll();
+    try{
+      return await this.usersService.findAll();
+    }catch(err){
+      throw err
+    }
   }
 
   // ✅ Find One User
   async findOneUser(findOneUserDto: FindOneUserDto) {
-    return await this.usersService.findOne(findOneUserDto.id);
+    try{
+      return await this.usersService.findOne(findOneUserDto.id);
+    }catch(err){
+      throw err
+    }
   }
 
   // ✅ Update User
   async updateUser(updateUserDto: UpdateUserDto) {
-    return await this.usersService.update(updateUserDto.id, updateUserDto);
+    try{
+      return await this.usersService.update(updateUserDto.id, updateUserDto);
+    }catch(err){
+      throw err
+    }
   }
 
   // ✅ Remove User
   async removeUser(findOneUserDto: FindOneUserDto) {
-    return await this.usersService.remove(findOneUserDto.id);
+    try{
+      return await this.usersService.remove(findOneUserDto.id);
+    }catch(err){
+      throw err
+    }
   }
 
 }
