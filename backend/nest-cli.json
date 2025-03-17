@@ -5,9 +5,7 @@
   "sourceRoot": "./",
   "entryFile": "src/main",
   "compilerOptions": {
-    "assets": [
-      "**/*.proto"
-    ],
+    "assets": ["**/*.proto"],
     "watchAssets": true,
     "deleteOutDir": true,
     "webpack": true,
@@ -34,7 +32,7 @@
       "sourceRoot": "./",
       "compilerOptions": {
         "tsConfigPath": "apps/auth/tsconfig.app.json",
-        "assets": ["proto/*.proto"],
+        "assets": ["proto/*.proto", "prisma/schema.prisma"],
         "watchAssets": true
       }
     },

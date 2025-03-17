@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package user;
+package auth;
 
 service UserService {
     rpc CreateUser(CreateUserDto) returns (User);
@@ -28,7 +28,7 @@ message Empty {}
 
 // User Model
 message User {
-    string id = 1;
+    optional string id = 1;
     optional string name = 2;
     optional string email = 3;
     optional string emailVerified = 4;
@@ -52,6 +52,7 @@ message UpdateUserDto {
     optional string name = 2;
     optional string email = 3;
     optional string password = 4;
+    optional string image=5;
     // repeated string favoriteIds = 5;
 }
 
@@ -105,3 +106,5 @@ message UserIdRequest {
 message Accounts {
     repeated Account accounts = 1;
 }
+
+// /protoc --plugin=protoc-gen-ts_proto=.\node_modules\.bin\protoc-gen-ts_proto.cmd --ts_proto_out=.\ --ts_proto_opt=nestJs=true .\proto\auth.proto

@@ -1,72 +1,74 @@
-import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
-import { CreateUserDto, PaginationDto, UpdateUserDto, User, Users } from '@app/common';
-import { randomUUID } from 'crypto';
-import { Observable, Subject } from 'rxjs';
-
+import { CreateUserDto,UpdateUserDto, User } from '@app/common/types/auth';
+import { Injectable} from '@nestjs/common';
+import { PrismaService } from 'apps/auth/prisma/PrismaService';
+import bcrypt from "bcryptjs";
 @Injectable()
-export class UsersService implements OnModuleInit {
-  private readonly users:User[]=[];
-  onModuleInit() {
-      for(let i=0;i<=100;i++){
-        this.create({username:randomUUID(),password:randomUUID(),age:3})
-      }
-  }
-  create(createUserDto: CreateUserDto) {
-    const user:User={
-      ...createUserDto,
-      subscribed:false,
-      socialMedia:{},
-      id:randomUUID()
-    }
-    this.users.push(user)
-    return user
+export class UsersService {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const hashedPassword = await bcrypt.hash(createUserDto.password!, 10);
+
+    const user = await this.prismaService.user.create({
+      data: {
+        name: createUserDto.name,
+        email: createUserDto.email,
+        hashedPassword: hashedPassword,
+      },
+      include: { accounts: true },
+    });
+
+    return this.cleanUser(user);
   }
 
-  findAll():Users {
-    return{users:this.users}
+  async findAll() {
+    const users = await this.prismaService.user.findMany({
+      include: { accounts: true },
+    });
+
+    return { users: users.map(this.cleanUser) };
   }
 
-  findOne(id: string) {
-    const user=this.users.find((user)=>user.id===id)
-    if (!user) {
-      throw new NotFoundException(`User not found by id ${id}`)
-    }
-    return user
+  async findOne(id: string) {
+    const user = await this.prismaService.user.findUnique({
+      where: { id },
+      include: { accounts: true },
+    });
+
+    return this.cleanUser(user);
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    const userIndex=this.users.findIndex((user)=>user.id===id);
-    if(userIndex!==-1){
-      this.users[userIndex]={
-        ...this.users[userIndex],
-        ...updateUserDto
-      }
-      return this.users[userIndex]
-    }
-    throw new NotFoundException(`User not found by id ${id}`)
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const data: any = {
+      name: updateUserDto.name,
+      email: updateUserDto.email,
+      ...(updateUserDto.password && { hashedPassword: await bcrypt.hash(updateUserDto.password, 10) }),
+    };
+
+    const updatedUser = await this.prismaService.user.update({
+      where: { id },
+      data,
+      include: { accounts: true },
+    });
+
+    return this.cleanUser(updatedUser);
   }
 
-  remove(id: string) {
-    const userIndex=this.users.findIndex((user)=>user.id===id);
-    if(userIndex!==-1){
-      return this.users.splice(userIndex)[0]
-    }
-    throw new NotFoundException(`User not found by id ${id}`)
-  }
-  queryUsers(paginationDtoStream:Observable<PaginationDto>):Observable<Users>{
-    const subject=new Subject<Users>()
-    const onNext=(paginationDto:PaginationDto)=>{
-      const start=paginationDto.page*paginationDto.skip;
-      subject.next({
-        users:this.users.slice(start,start+paginationDto.skip)
-      })
-    }
-    const onComplete=()=>subject.complete()
-    paginationDtoStream.subscribe({
-      next:onNext,
-      complete:onComplete
-    })
-    return subject.asObservable()
-  }
+  async remove(id: string) {
+    const deletedUser = await this.prismaService.user.delete({
+      where: { id },
+      include: { accounts: true },
+    });
 
+    return this.cleanUser(deletedUser);
+  }
+  private cleanUser(user: any): User {
+    return {
+      ...user,
+      name: user.name ?? undefined,
+      email: user.email ?? undefined,
+      image: user.image ?? undefined,
+      hashedPassword: user.hashedPassword ?? undefined,
+    };
+  }
 }
