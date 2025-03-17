@@ -11,7 +11,6 @@ export class UsersController implements UserServiceController {
     try{
       return await this.usersService.create(createUserDto);
     }catch(error){
-      console.error('🔥 gRPC Error in createUser:', error);
       throw error; // Let gRPC handle it
     }
   }

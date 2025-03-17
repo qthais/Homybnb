@@ -34,7 +34,6 @@ export class UsersService {
 
       return this.cleanUser(user);
     } catch (err) {
-      console.error('Error creating user:', err.details);
       throw new RpcException({
         code: status.INTERNAL,
         details: 'Error creating user',
@@ -49,7 +48,6 @@ export class UsersService {
 
       return { users: users.map(this.cleanUser) };
     } catch (error) {
-      console.error('🔥 Error in findAll:', error);
       throw new RpcException({
         code: status.INTERNAL,
         details: 'Error fetching users',
@@ -73,7 +71,6 @@ export class UsersService {
 
       return this.cleanUser(user);
     } catch (error) {
-      console.error('🔥 Error in findOne:', error);
       throw new RpcException({
         code: status.INTERNAL,
         details: 'Error fetching user',
@@ -99,7 +96,6 @@ export class UsersService {
 
       return this.cleanUser(updatedUser);
     } catch (error) {
-      console.error('🔥 Error in update:', error);
 
       if (error.code === 'P2025') {
         throw new RpcException({
@@ -124,7 +120,6 @@ export class UsersService {
 
       return this.cleanUser(deletedUser);
     } catch (error) {
-      console.error('🔥 Error in remove:', error);
 
       if (error.code === 'P2025') {
         throw new RpcException({
