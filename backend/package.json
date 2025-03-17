@@ -5,6 +5,9 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "prisma": {
+    "schema": "apps/auth/prisma/schema.prisma"
+  },
   "scripts": {
     "generate:proto": "protoc --plugin=protoc-gen-ts_proto=.\node_modulesbinrotoc-gen-ts_proto.cmd --ts_proto_out=.--ts_proto_opt=nestJs=true .rotouth.proto ",
     "build": "nest build",

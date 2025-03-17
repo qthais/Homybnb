@@ -1,24 +1,26 @@
-import { CreateUserDto,UpdateUserDto, User } from '@app/common/types/auth';
-import { Injectable} from '@nestjs/common';
+import { CreateUserDto, UpdateUserDto, User } from '@app/common/types/auth';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'apps/auth/prisma/PrismaService';
-import bcrypt from "bcryptjs";
+import * as bcrypt from 'bcryptjs';
 @Injectable()
 export class UsersService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto){
     const hashedPassword = await bcrypt.hash(createUserDto.password!, 10);
-
-    const user = await this.prismaService.user.create({
-      data: {
-        name: createUserDto.name,
-        email: createUserDto.email,
-        hashedPassword: hashedPassword,
-      },
-      include: { accounts: true },
-    });
-
-    return this.cleanUser(user);
+    try {
+      const user = await this.prismaService.user.create({
+        data: {
+          name: createUserDto.name,
+          email: createUserDto.email,
+          hashedPassword: hashedPassword,
+        },
+        include: { accounts: true },
+      });
+      return this.cleanUser(user);
+    } catch (err) {
+      console.log(err.message);
+    }
   }
 
   async findAll() {
@@ -42,7 +44,9 @@ export class UsersService {
     const data: any = {
       name: updateUserDto.name,
       email: updateUserDto.email,
-      ...(updateUserDto.password && { hashedPassword: await bcrypt.hash(updateUserDto.password, 10) }),
+      ...(updateUserDto.password && {
+        hashedPassword: await bcrypt.hash(updateUserDto.password, 10),
+      }),
     };
 
     const updatedUser = await this.prismaService.user.update({
