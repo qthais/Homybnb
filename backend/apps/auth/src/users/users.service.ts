@@ -71,6 +71,10 @@ export class UsersService {
 
       return this.cleanUser(user);
     } catch (error) {
+      console.log(error)
+      if (error instanceof RpcException && error.error?.code === status.NOT_FOUND) {
+        throw error; // Propagate the original NOT_FOUND error
+      }
       throw new RpcException({
         code: status.INTERNAL,
         details: 'Error fetching user',
@@ -96,7 +100,6 @@ export class UsersService {
 
       return this.cleanUser(updatedUser);
     } catch (error) {
-
       if (error.code === 'P2025') {
         throw new RpcException({
           code: status.NOT_FOUND,
