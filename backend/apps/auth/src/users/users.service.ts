@@ -71,8 +71,7 @@ export class UsersService {
 
       return this.cleanUser(user);
     } catch (error) {
-      console.log(error)
-      if (error instanceof RpcException && error.error?.code === status.NOT_FOUND) {
+      if (error instanceof RpcException) {
         throw error; // Propagate the original NOT_FOUND error
       }
       throw new RpcException({

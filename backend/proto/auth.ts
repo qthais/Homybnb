@@ -34,7 +34,7 @@ export interface User {
 export interface CreateUserDto {
   name: string;
   email: string;
-  password?: string | undefined;
+  password: string;
 }
 
 export interface UpdateUserDto {
@@ -50,6 +50,11 @@ export interface UpdateUserDto {
 
 export interface FindOneUserDto {
   id: string;
+}
+
+export interface LoginDto {
+  email: string;
+  password: string;
 }
 
 export interface Users {
@@ -141,6 +146,31 @@ export function UserServiceControllerMethods() {
 }
 
 export const USER_SERVICE_NAME = "UserService";
+
+export interface AuthServiceClient {
+  login(request: LoginDto): Observable<User>;
+}
+
+export interface AuthServiceController {
+  login(request: LoginDto): Promise<User> | Observable<User> | User;
+}
+
+export function AuthServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ["login"];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("AuthService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("AuthService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const AUTH_SERVICE_NAME = "AuthService";
 
 export interface AccountServiceClient {
   findAccountById(request: AccountIdRequest): Observable<Account>;

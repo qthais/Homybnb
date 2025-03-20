@@ -12,7 +12,6 @@ export class GrpcErrorInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       catchError((error) => {
-        console.error('gRPC Error:', error);
         let httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         let message = 'Internal Server Error';
 

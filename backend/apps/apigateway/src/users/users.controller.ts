@@ -3,7 +3,6 @@ import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from '@app/common/types/auth';
 import { GrpcErrorInterceptor } from '../utils/GrpcErrorInterceptor';
 
-@UseInterceptors(GrpcErrorInterceptor)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
