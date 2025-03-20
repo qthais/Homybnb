@@ -1,4 +1,4 @@
-import { AuthServiceController, AuthServiceControllerMethods, LoginDto, User } from '@app/common';
+import { AuthServiceController, AuthServiceControllerMethods, LoginDto, RegisterDto, User } from '@app/common';
 import { Controller } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
@@ -12,6 +12,14 @@ export class AuthController implements AuthServiceController {
             return user
         }catch(err){
             throw (err)
+        }
+    }
+    async register(registerDto:RegisterDto):Promise<User>{
+        try{
+            const user = await this.authService.register(registerDto)
+            return user
+        }catch(err){
+            throw err
         }
     }
     

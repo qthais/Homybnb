@@ -12,6 +12,7 @@ service UserService {
 
 service AuthService{
     rpc Login(LoginDto) returns (User);
+    rpc Register(RegisterDto) returns (User);
 }
 
 service AccountService {
@@ -63,6 +64,13 @@ message UpdateUserDto {
 message FindOneUserDto {
     string id = 1;
 }
+
+message RegisterDto{
+    string email=1;
+    string name=2;
+    string password=3;
+}
+
 message LoginDto{
     string email=1;
     string password=2;

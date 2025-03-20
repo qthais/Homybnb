@@ -52,6 +52,12 @@ export interface FindOneUserDto {
   id: string;
 }
 
+export interface RegisterDto {
+  email: string;
+  name: string;
+  password: string;
+}
+
 export interface LoginDto {
   email: string;
   password: string;
@@ -149,15 +155,19 @@ export const USER_SERVICE_NAME = "UserService";
 
 export interface AuthServiceClient {
   login(request: LoginDto): Observable<User>;
+
+  register(request: RegisterDto): Observable<User>;
 }
 
 export interface AuthServiceController {
   login(request: LoginDto): Promise<User> | Observable<User> | User;
+
+  register(request: RegisterDto): Promise<User> | Observable<User> | User;
 }
 
 export function AuthServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["login"];
+    const grpcMethods: string[] = ["login", "register"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("AuthService", method)(constructor.prototype[method], method, descriptor);
