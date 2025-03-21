@@ -13,7 +13,7 @@ export class AuthController {
     return new ResponseDto(HttpStatus.OK, 'Login successfully', {user});
   }
   @Post('/register')
-  @HttpCode(200)
+  @HttpCode(201)
   async register(@Body() registerDto:RegisterDto){
     const user=await this.authService.register(registerDto)
     return new ResponseDto(HttpStatus.OK, 'Register successfully', {user});
