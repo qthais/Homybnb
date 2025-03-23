@@ -111,17 +111,19 @@ export class AuthService {
             account.provider === provider &&
             account.providerAccountId === providerAccountId
         );
-        await this.prismaService.account.update({
-          where: { id: existingAccount?.id },
-          data: {
-            access_token: accessToken,
-            refresh_token: refreshToken,
-            token_type: tokenType,
-            expires_at: expiresAt,
-            scope,
-          },
-        });
-        if (!existingAccount) {
+        if(existingAccount){
+          await this.prismaService.account.update({
+            where: { id: existingAccount?.id },
+            data: {
+              access_token: accessToken,
+              refresh_token: refreshToken,
+              token_type: tokenType,
+              expires_at: expiresAt,
+              scope,
+            },
+          });
+        }
+        else {
           await this.prismaService.account.create({
             data: {
               userId: existingUser.id,
@@ -135,7 +137,18 @@ export class AuthService {
             },
           });
         }
-        return cleanUser(existingUser);
+        if(
+          name!==existingUser.name||image!==existingUser.image
+        ){
+          await this.prismaService.user.update({
+            where: { id: existingUser.id },
+            data: {
+              name: name || existingUser.name,
+              image: image || existingUser.image,
+            },
+          });
+        }
+        return cleanUser({...existingUser,name,image});
       }
       const newUser = await this.prismaService.user.create({
         data: {
