@@ -49,7 +49,7 @@ export interface UpdateUserDto {
 }
 
 export interface FindOneUserDto {
-  id: string;
+  email: string;
 }
 
 export interface RegisterDto {

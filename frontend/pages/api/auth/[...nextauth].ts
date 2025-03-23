@@ -3,7 +3,6 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axiosClient from "@/utils/axiosClient";
-import toast from "react-hot-toast";
 export const authOptions: AuthOptions = {
   // Configure one or more authentication providers
   providers: [
@@ -39,18 +38,26 @@ export const authOptions: AuthOptions = {
         }
         }catch(err){
           console.log(err)
+          return null
         }
       },
     }),
   ],
   pages: {
     signIn: "/",
+    signOut:"/"
   },
   debug: process.env.NODE_ENV === "development",
   session: {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    async redirect() {
+      const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL  // Use environment variable for client-side URL
+      return `${clientUrl}/`; // Redirect to the client-side URL (e.g., localhost:8080)
+    },
+  },
 };
 
 export default NextAuth(authOptions);

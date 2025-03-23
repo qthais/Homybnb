@@ -1,7 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpException,
+  HttpStatus,
+  UseInterceptors,
+  HttpCode,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from '@app/common/types/auth';
 import { GrpcErrorInterceptor } from '../utils/GrpcErrorInterceptor';
+import { ResponseDto } from '../utils/types/HttpResponse';
 
 @Controller('users')
 export class UsersController {
@@ -9,7 +22,7 @@ export class UsersController {
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto)
+    return this.usersService.create(createUserDto);
   }
 
   @Get()
@@ -17,14 +30,17 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  @Post('/find')
+  @HttpCode(200)
+  async findOne(@Body('email') email: string) {
+    const user = await this.usersService.findOne(email);
+    return new ResponseDto(HttpStatus.OK, 'Found', { user });
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const user= await this.usersService.update(id, updateUserDto);
+    return new ResponseDto(HttpStatus.OK, 'Update successfully!', { user });
   }
 
   @Delete(':id')

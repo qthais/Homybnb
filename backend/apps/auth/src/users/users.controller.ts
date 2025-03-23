@@ -27,7 +27,7 @@ export class UsersController implements UserServiceController {
   // ✅ Find One User
   async findOneUser(findOneUserDto: FindOneUserDto) {
     try{
-      return await this.usersService.findOne(findOneUserDto.id);
+      return await this.usersService.findOne(findOneUserDto.email);
     }catch(err){
       throw err
     }

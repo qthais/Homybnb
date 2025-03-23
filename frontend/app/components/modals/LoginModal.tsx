@@ -38,7 +38,7 @@ const LoginModal = () => {
                 loginModal.onClose()
             }
             if (callback?.error) {
-                toast.error(callback.error || "Logout failed")
+                toast.error(callback.error || "Login failed")
             }
         }).catch(err => {
             setIsLoading(false);

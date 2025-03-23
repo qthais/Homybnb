@@ -2,6 +2,7 @@
 import { AUTH_PACKAGE_NAME, CreateUserDto, UpdateUserDto, USER_SERVICE_NAME, UserServiceClient } from '@app/common/types/auth';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -20,12 +21,16 @@ export class UsersService implements OnModuleInit {
     return this.usersService.findAllUsers({});
   }
 
-  findOne(id: string) {
-    return this.usersService.findOneUser({id})
+  async findOne(email: string) {
+    const source= this.usersService.findOneUser({email})
+    const user= await lastValueFrom(source)
+    return user
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return this.usersService.updateUser({id,...updateUserDto})
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const source= this.usersService.updateUser({id,...updateUserDto})
+    const user= await lastValueFrom(source)
+    return user
   }
 
   remove(id: string) {
