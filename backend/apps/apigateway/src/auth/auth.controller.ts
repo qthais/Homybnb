@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto, RegisterDto } from '@app/common';
+import { LoginDto, LoginOauthDto, RegisterDto } from '@app/common';
 import { ResponseDto } from '../utils/types/HttpResponse';
 
 @Controller('auth')
@@ -10,6 +10,13 @@ export class AuthController {
   @HttpCode(200)
   async login(@Body() loginDto:LoginDto){
     const user=await this.authService.login(loginDto)
+    return new ResponseDto(HttpStatus.OK, 'Login successfully', {user});
+  }
+
+  @Post('/login/oauth')
+  @HttpCode(200)
+  async loginWithOauth(@Body() loginOauthDto:LoginOauthDto){
+    const user=await this.authService.loginWithOauth(loginOauthDto)
     return new ResponseDto(HttpStatus.OK, 'Login successfully', {user});
   }
   @Post('/register')

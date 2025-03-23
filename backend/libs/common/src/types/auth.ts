@@ -10,6 +10,23 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "auth";
 
+export interface LoginOauthDto {
+  email: string;
+  userId: string;
+  type: string;
+  provider: string;
+  providerAccountId: string;
+  refreshToken?: string | undefined;
+  accessToken?: string | undefined;
+  expiresAt?: number | undefined;
+  tokenType?: string | undefined;
+  scope?: string | undefined;
+  idToken?: string | undefined;
+  sessionState?: string | undefined;
+  image: string;
+  name: string;
+}
+
 /** Empty message for methods that require no input */
 export interface Empty {
 }
@@ -32,9 +49,20 @@ export interface User {
 
 /** DTOs for User */
 export interface CreateUserDto {
-  name: string;
+  userId: string;
+  type: string;
+  provider: string;
+  providerAccountId: string;
+  refreshToken?: string | undefined;
+  accessToken?: string | undefined;
+  expiresAt?: number | undefined;
+  tokenType?: string | undefined;
+  scope?: string | undefined;
+  idToken?: string | undefined;
+  sessionState?: string | undefined;
   email: string;
   password: string;
+  name: string;
 }
 
 export interface UpdateUserDto {
@@ -157,17 +185,21 @@ export interface AuthServiceClient {
   login(request: LoginDto): Observable<User>;
 
   register(request: RegisterDto): Observable<User>;
+
+  loginWithOauth(request: LoginOauthDto): Observable<User>;
 }
 
 export interface AuthServiceController {
   login(request: LoginDto): Promise<User> | Observable<User> | User;
 
   register(request: RegisterDto): Promise<User> | Observable<User> | User;
+
+  loginWithOauth(request: LoginOauthDto): Promise<User> | Observable<User> | User;
 }
 
 export function AuthServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["login", "register"];
+    const grpcMethods: string[] = ["login", "register", "loginWithOauth"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("AuthService", method)(constructor.prototype[method], method, descriptor);

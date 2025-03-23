@@ -3,6 +3,7 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axiosClient from "@/utils/axiosClient";
+import toast from "react-hot-toast";
 export const authOptions: AuthOptions = {
   // Configure one or more authentication providers
   providers: [
@@ -37,8 +38,7 @@ export const authOptions: AuthOptions = {
             throw new Error("User not found in response");
         }
         }catch(err){
-          console.log(err)
-          return null
+          throw err.response.data
         }
       },
     }),
@@ -57,6 +57,35 @@ export const authOptions: AuthOptions = {
       const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL  // Use environment variable for client-side URL
       return `${clientUrl}/`; // Redirect to the client-side URL (e.g., localhost:8080)
     },
+    async signIn({ user, account }) {
+      if (account?.provider !== "credentials") {
+        try {
+          const res = await axiosClient.post("api/auth/login/oauth", {
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            provider: account?.provider,
+            providerAccountId: account?.providerAccountId,
+            accessToken: account?.access_token,
+            refreshToken: account?.refresh_token,
+            expiresAt: account?.expires_at,
+            tokenType: account?.token_type,
+            scope: account?.scope,
+          });
+    
+          if (!res.data?.data?.user) {
+            console.error("Backend didn't return user");
+            return false;
+          }
+        } catch (error: any) {
+          console.error("OAuth login failed:", error || error.message);
+          return false
+        }
+      }
+    
+      return true;
+    }
+    
   },
 };
 

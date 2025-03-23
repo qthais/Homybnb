@@ -12,6 +12,7 @@ import Button from '../Button'
 import { FcGoogle } from 'react-icons/fc'
 import { AiFillGithub } from 'react-icons/ai'
 import axiosClient from '@/utils/axiosClient'
+import { signIn } from 'next-auth/react'
 
 const RegisterModal = () => {
     const RegisterModal = useRegisterModal()
@@ -27,7 +28,6 @@ const RegisterModal = () => {
         try {
             setIsLoading(true)
             const res = await axiosClient.post('/api/auth/register', data)
-            console.log(res)
             toast.success('Register successfully')
             RegisterModal.onClose()
         } catch (err) {
@@ -67,7 +67,7 @@ const RegisterModal = () => {
         <div className='flex flex-col gap-4 mt-3'>
             <hr />
             <Button outline onClick={() => { }} label='Continue with Google' icon={FcGoogle} />
-            <Button outline onClick={() => { }} label='Continue with Github' icon={AiFillGithub} />
+            <Button outline onClick={() => {signIn('github') }} label='Continue with Github' icon={AiFillGithub} />
             <div className=" text-neutral-500 text-center mt-4 font-light">
                 <div className="justify-center flex flex-row items-center gap-2">
 

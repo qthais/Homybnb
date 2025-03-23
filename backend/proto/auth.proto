@@ -13,6 +13,7 @@ service UserService {
 service AuthService{
     rpc Login(LoginDto) returns (User);
     rpc Register(RegisterDto) returns (User);
+    rpc LoginWithOauth(LoginOauthDto) returns (User);
 }
 
 service AccountService {
@@ -20,6 +21,23 @@ service AccountService {
     rpc FindAccountsByUserId(UserIdRequest) returns (Accounts);
     rpc CreateAccount(CreateAccountDto) returns (Account);
     rpc DeleteAccount(AccountIdRequest) returns (Empty);
+}
+
+message LoginOauthDto{
+    string email=1;
+    string userId = 2;
+    string type = 3;
+    string provider = 4;
+    string providerAccountId = 5;
+    optional string refresh_token = 6;
+    optional string access_token = 7;
+    optional int32 expires_at = 8;
+    optional string token_type = 9;
+    optional string scope = 10;
+    optional string id_token = 11;
+    optional string session_state = 12;
+    string image =13;
+    string name=14;
 }
 
 // Empty message for methods that require no input
@@ -47,9 +65,20 @@ message User {
 
 // DTOs for User
 message CreateUserDto {
-    string name = 1;
-    string email = 2;
-    string password = 3;
+    string userId = 1;
+    string type = 2;
+    string provider = 3;
+    string providerAccountId = 4;
+    optional string refresh_token = 5;
+    optional string access_token = 6;
+    optional int32 expires_at = 7;
+    optional string token_type = 8;
+    optional string scope = 9;
+    optional string id_token = 10;
+    optional string session_state = 11;
+    string email=12;
+    string password=13;
+    string name=14;
 }
 
 message UpdateUserDto {
