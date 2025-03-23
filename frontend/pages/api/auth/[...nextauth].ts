@@ -3,7 +3,6 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axiosClient from "@/utils/axiosClient";
-import toast from "react-hot-toast";
 export const authOptions: AuthOptions = {
   // Configure one or more authentication providers
   providers: [
