@@ -7,13 +7,14 @@ service UserService {
     rpc FindAllUsers(Empty) returns (Users);
     rpc FindOneUser(FindOneUserDto) returns (User);
     rpc UpdateUser(UpdateUserDto) returns (User);
-    rpc RemoveUser(FindOneUserDto) returns (User);
+    rpc RemoveUser(RemoveUserDto) returns (User);
 }
 
 service AuthService{
-    rpc Login(LoginDto) returns (User);
+    rpc Login(LoginDto) returns (LoginResponseDto);
     rpc Register(RegisterDto) returns (User);
-    rpc LoginWithOauth(LoginOauthDto) returns (User);
+    rpc LoginWithOauth(LoginOauthDto) returns (LoginResponseDto);
+    rpc RefreshToken(Payload) returns (Tokens);
 }
 
 service AccountService {
@@ -21,6 +22,25 @@ service AccountService {
     rpc FindAccountsByUserId(UserIdRequest) returns (Accounts);
     rpc CreateAccount(CreateAccountDto) returns (Account);
     rpc DeleteAccount(AccountIdRequest) returns (Empty);
+}
+
+message LoginResponseDto{
+    User user=1;
+    Tokens tokens=2;
+}
+
+message Payload{
+    string email=1;
+    Sub sub=2;
+}
+
+message Sub{
+    string userId=1;
+}
+
+message Tokens{
+    string accessToken=1;
+    string refreshToken=2;
 }
 
 message LoginOauthDto{
@@ -92,6 +112,9 @@ message UpdateUserDto {
 
 message FindOneUserDto {
     string email = 1;
+}
+message RemoveUserDto{
+    string id=1;
 }
 
 message RegisterDto{

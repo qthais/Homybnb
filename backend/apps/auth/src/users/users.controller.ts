@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, FindOneUserDto, UpdateUserDto, UserServiceController, UserServiceControllerMethods } from '@app/common/types/auth';
+import { CreateUserDto, FindOneUserDto, RemoveUserDto, UpdateUserDto, UserServiceController, UserServiceControllerMethods } from '@app/common/types/auth';
 
 @Controller()
 @UserServiceControllerMethods()
@@ -43,9 +43,9 @@ export class UsersController implements UserServiceController {
   }
 
   // ✅ Remove User
-  async removeUser(findOneUserDto: FindOneUserDto) {
+  async removeUser(removeUserDto:RemoveUserDto) {
     try{
-      return await this.usersService.remove(findOneUserDto.id);
+      return await this.usersService.remove(removeUserDto.id);
     }catch(err){
       throw err
     }

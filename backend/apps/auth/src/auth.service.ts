@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/PrismaService';
-import { LoginDto, LoginOauthDto, RegisterDto } from '@app/common';
+import { LoginDto, LoginOauthDto, Payload, RegisterDto } from '@app/common';
 import { RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
 import * as bcrypt from 'bcryptjs';
 import cleanUser from '@app/common/constants/cleanUser';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService,
+     private readonly configService:ConfigService,
+     private readonly jwtService:JwtService,
+    ) {}
   async login(loginDto: LoginDto) {
     if (!loginDto.email || !loginDto.password) {
       throw new RpcException({
@@ -15,7 +20,7 @@ export class AuthService {
         details: 'Email and password are required!',
       });
     }
-    const exsistingUser = await this.prismaService.user.findUnique({
+    const existingUser = await this.prismaService.user.findUnique({
       where: {
         email: loginDto.email,
       },
@@ -23,7 +28,7 @@ export class AuthService {
         accounts: true,
       },
     });
-    if (!exsistingUser) {
+    if (!existingUser) {
       throw new RpcException({
         code: status.INVALID_ARGUMENT,
         details: 'Invalid credentials!',
@@ -31,7 +36,7 @@ export class AuthService {
     }
     const isCorrectPassword = await bcrypt.compare(
       loginDto.password,
-      exsistingUser.hashedPassword!,
+      existingUser.hashedPassword!,
     );
     if (!isCorrectPassword) {
       throw new RpcException({
@@ -39,8 +44,15 @@ export class AuthService {
         details: 'Invalid credentails!',
       });
     }
+    const payload={
+      email:existingUser.email!,
+      sub:{
+        userId:existingUser.id
+      }
+    }
+    const {accessToken,refreshToken}=await this.issueToken(payload)
 
-    return cleanUser(exsistingUser);
+    return {user:cleanUser(existingUser),tokens:{accessToken,refreshToken}};
   }
   async register(registerDto: RegisterDto) {
     const { email, name, password } = registerDto;
@@ -86,8 +98,8 @@ export class AuthService {
       provider,
       providerAccountId,
       image,
-      accessToken,
-      refreshToken,
+      accessToken:oauthAccessToken,
+      refreshToken:oauthRefreshToken,
       expiresAt,
       scope,
       tokenType,
@@ -106,6 +118,13 @@ export class AuthService {
         },
       });
       if (existingUser) {
+        const payload={
+          email:existingUser.email!,
+          sub:{
+            userId:existingUser.id
+          }
+        }
+        const {accessToken,refreshToken}=await this.issueToken(payload)
         const existingAccount = existingUser.accounts.find(
           (account) =>
             account.provider === provider &&
@@ -115,8 +134,8 @@ export class AuthService {
           await this.prismaService.account.update({
             where: { id: existingAccount?.id },
             data: {
-              access_token: accessToken,
-              refresh_token: refreshToken,
+              access_token: oauthAccessToken,
+              refresh_token: oauthRefreshToken,
               token_type: tokenType,
               expires_at: expiresAt,
               scope,
@@ -129,26 +148,30 @@ export class AuthService {
               userId: existingUser.id,
               provider,
               providerAccountId,
-              access_token: accessToken,
-              refresh_token: refreshToken,
+              access_token: oauthAccessToken,
+              refresh_token: oauthRefreshToken,
               token_type: tokenType,
               type: 'oauth',
               scope,
             },
           });
         }
+        let updatedUser=existingUser
         if(
           name!==existingUser.name||image!==existingUser.image
         ){
-          await this.prismaService.user.update({
+          updatedUser=await this.prismaService.user.update({
             where: { id: existingUser.id },
             data: {
               name: name || existingUser.name,
               image: image || existingUser.image,
             },
+            include:{
+              accounts:true
+            }
           });
         }
-        return cleanUser({...existingUser,name,image});
+        return {user:cleanUser(updatedUser),tokens:{accessToken,refreshToken}};
       }
       const newUser = await this.prismaService.user.create({
         data: {
@@ -159,8 +182,8 @@ export class AuthService {
             create: {
               provider,
               providerAccountId,
-              access_token: accessToken,
-              refresh_token: refreshToken,
+              access_token: oauthAccessToken,
+              refresh_token: oauthRefreshToken,
               token_type: tokenType,
               expires_at: expiresAt,
               type: 'oauth',
@@ -172,8 +195,15 @@ export class AuthService {
           accounts: true,
         },
       });
+      const payload={
+        email:newUser.email!,
+        sub:{
+          userId:newUser.id
+        }
+      }
+      const {accessToken,refreshToken}=await this.issueToken(payload)
   
-      return cleanUser(newUser);
+      return {user:cleanUser(newUser),tokens:{accessToken,refreshToken}};
     }catch(error){
       console.log(error)
       if (error instanceof RpcException) {
@@ -184,5 +214,27 @@ export class AuthService {
         details: 'Error fetching user',
       });
     }
+  }
+  async refreshToken(payload:Payload){
+    if(!payload){
+      throw new RpcException({
+        code:status.INVALID_ARGUMENT,
+        details:"Payload not provided!"
+      })
+    }
+    const {accessToken,refreshToken}=await this.issueToken(payload)
+    return {accessToken,refreshToken}
+  }
+
+  private async issueToken (payload:Payload){
+    const accessToken=await this.jwtService.signAsync(payload,{
+      expiresIn:'1h',
+      secret:this.configService.get<string>('JWT_ACCESS_SECRET')
+    })
+    const refreshToken=await this.jwtService.signAsync(payload,{
+      expiresIn:'7d',
+      secret:this.configService.get<string>('JWT_REFRESH_SECRET')
+    })
+    return {accessToken,refreshToken}
   }
 }

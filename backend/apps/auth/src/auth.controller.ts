@@ -1,4 +1,4 @@
-import { AuthServiceController, AuthServiceControllerMethods, LoginDto, LoginOauthDto, RegisterDto, User } from '@app/common';
+import { AuthServiceController, AuthServiceControllerMethods, LoginDto, LoginOauthDto, LoginResponseDto, Payload, RegisterDto, Tokens, User } from '@app/common';
 import { Controller } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
@@ -7,18 +7,18 @@ import { Observable } from 'rxjs';
 @AuthServiceControllerMethods()
 export class AuthController implements AuthServiceController {
     constructor(private readonly authService:AuthService){}
-    async loginWithOauth(loginOauthDto: LoginOauthDto): Promise<User> {
+    async loginWithOauth(loginOauthDto: LoginOauthDto): Promise<LoginResponseDto> {
         try{
-            const user=await this.authService.loginWithOauth(loginOauthDto)
-            return user
+            const res:LoginResponseDto=await this.authService.loginWithOauth(loginOauthDto)
+            return res
         }catch(err){
             throw (err)
         }
     }
-    async login(loginDto: LoginDto):Promise<User>{
+    async login(loginDto: LoginDto):Promise<LoginResponseDto>{
         try{
-            const user=await this.authService.login(loginDto)
-            return user
+            const res:LoginResponseDto=await this.authService.login(loginDto)
+            return res
         }catch(err){
             throw (err)
         }
@@ -29,6 +29,13 @@ export class AuthController implements AuthServiceController {
             return user
         }catch(err){
             throw err
+        }
+    }
+    async refreshToken(payload: Payload): Promise<Tokens>  {
+        try{
+            return await this.authService.refreshToken(payload)
+        }catch(err){
+            throw(err)
         }
     }
     

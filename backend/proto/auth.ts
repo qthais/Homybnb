@@ -10,6 +10,25 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "auth";
 
+export interface LoginResponseDto {
+  user: User | undefined;
+  tokens: Tokens | undefined;
+}
+
+export interface Payload {
+  email: string;
+  sub: Sub | undefined;
+}
+
+export interface Sub {
+  userId: string;
+}
+
+export interface Tokens {
+  accessToken: string;
+  refreshToken: string;
+}
+
 export interface LoginOauthDto {
   email: string;
   userId: string;
@@ -78,6 +97,10 @@ export interface UpdateUserDto {
 
 export interface FindOneUserDto {
   email: string;
+}
+
+export interface RemoveUserDto {
+  id: string;
 }
 
 export interface RegisterDto {
@@ -149,7 +172,7 @@ export interface UserServiceClient {
 
   updateUser(request: UpdateUserDto): Observable<User>;
 
-  removeUser(request: FindOneUserDto): Observable<User>;
+  removeUser(request: RemoveUserDto): Observable<User>;
 }
 
 export interface UserServiceController {
@@ -161,7 +184,7 @@ export interface UserServiceController {
 
   updateUser(request: UpdateUserDto): Promise<User> | Observable<User> | User;
 
-  removeUser(request: FindOneUserDto): Promise<User> | Observable<User> | User;
+  removeUser(request: RemoveUserDto): Promise<User> | Observable<User> | User;
 }
 
 export function UserServiceControllerMethods() {
@@ -182,24 +205,28 @@ export function UserServiceControllerMethods() {
 export const USER_SERVICE_NAME = "UserService";
 
 export interface AuthServiceClient {
-  login(request: LoginDto): Observable<User>;
+  login(request: LoginDto): Observable<LoginResponseDto>;
 
   register(request: RegisterDto): Observable<User>;
 
-  loginWithOauth(request: LoginOauthDto): Observable<User>;
+  loginWithOauth(request: LoginOauthDto): Observable<LoginResponseDto>;
+
+  refreshToken(request: Payload): Observable<Tokens>;
 }
 
 export interface AuthServiceController {
-  login(request: LoginDto): Promise<User> | Observable<User> | User;
+  login(request: LoginDto): Promise<LoginResponseDto> | Observable<LoginResponseDto> | LoginResponseDto;
 
   register(request: RegisterDto): Promise<User> | Observable<User> | User;
 
-  loginWithOauth(request: LoginOauthDto): Promise<User> | Observable<User> | User;
+  loginWithOauth(request: LoginOauthDto): Promise<LoginResponseDto> | Observable<LoginResponseDto> | LoginResponseDto;
+
+  refreshToken(request: Payload): Promise<Tokens> | Observable<Tokens> | Tokens;
 }
 
 export function AuthServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["login", "register", "loginWithOauth"];
+    const grpcMethods: string[] = ["login", "register", "loginWithOauth", "refreshToken"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("AuthService", method)(constructor.prototype[method], method, descriptor);

@@ -10,11 +10,13 @@ import {
   HttpStatus,
   UseInterceptors,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from '@app/common/types/auth';
 import { GrpcErrorInterceptor } from '../utils/GrpcErrorInterceptor';
 import { ResponseDto } from '../utils/types/HttpResponse';
+import { AuthGuard } from '../guards/jwt.guard';
 
 @Controller('users')
 export class UsersController {
@@ -30,6 +32,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @UseGuards(AuthGuard)
   @Post('/find')
   @HttpCode(200)
   async findOne(@Body('email') email: string) {
