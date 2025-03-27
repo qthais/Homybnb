@@ -31,7 +31,6 @@ export class UsersController {
   findAll() {
     return this.usersService.findAll();
   }
-
   @UseGuards(AuthGuard)
   @Post('/find')
   @HttpCode(200)

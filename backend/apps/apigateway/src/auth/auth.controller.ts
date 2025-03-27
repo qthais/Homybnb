@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { LoginDto, LoginOauthDto, Payload, RegisterDto } from '@app/common';
 import { ResponseDto } from '../utils/types/HttpResponse';
 import { RefreshJwtGuard } from '../guards/refresh.guard';
+import { AuthGuard } from '../guards/jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -34,5 +35,12 @@ export class AuthController {
   async refreshToken(@Request() req){
     const res=await this.authService.refreshToken(req.user)
     return new ResponseDto(HttpStatus.OK,"Refresh token successfully",{tokens:res})
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/authCheck')
+  async authCheck(@Request() req){
+    const user= req.user
+    return new ResponseDto(HttpStatus.OK,"",{user})
   }
 }

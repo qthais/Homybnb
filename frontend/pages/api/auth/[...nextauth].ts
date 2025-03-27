@@ -32,7 +32,11 @@ export const authOptions: AuthOptions = {
           });
           if (response.data?.data?.user) {
             user = response.data.data.user;
-            return user
+            const tokens=response.data.data.tokens
+            return {
+              ...user,
+              tokens
+            }
           } else {
             throw new Error("User not found in response");
         }
@@ -72,10 +76,15 @@ export const authOptions: AuthOptions = {
             scope: account?.scope,
           });
     
-          if (!res.data?.data?.user) {
-            console.error("Backend didn't return user");
+          const enrichedUser = res.data?.data?.user;
+          const tokens = res.data?.data?.tokens;
+    
+          if (!enrichedUser || !tokens) {
+            console.error("OAuth login: user or tokens missing");
             return false;
           }
+          (user as any).user = enrichedUser;
+          (user as any).tokens = tokens;
         } catch (error: any) {
           console.error("OAuth login failed:", error || error.message);
           return false
@@ -83,6 +92,17 @@ export const authOptions: AuthOptions = {
       }
     
       return true;
+    },
+    async jwt({token,user}){
+      if(user) {
+        return{
+        ...token,...user
+      }}
+      return token
+    },
+    async session({token,session}){
+      session.tokens=token.tokens
+      return session
     }
     
   },
