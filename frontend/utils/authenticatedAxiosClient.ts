@@ -6,7 +6,7 @@ export const authenticatedRequest = async <T = any>(
   config: Parameters<typeof axiosClient.request>[0]
 ) => {
   const session = await getSession();
-  console.log("sessionInAuthRequest",session?.tokens)
+  // console.log("sessionInAuthRequest",session?.tokens)
   const token = session?.tokens?.accessToken;
 
   if (token) {
@@ -15,12 +15,12 @@ export const authenticatedRequest = async <T = any>(
       Authorization: `Bearer ${token}`,
     };
   }
-  console.log('🔍 Authenticated Request Config:', {
-    url: config.url,
-    method: config.method,
-    headers: config.headers,
-    data: config.data,
-  });
+  // console.log('🔍 Authenticated Request Config:', {
+  //   url: config.url,
+  //   method: config.method,
+  //   headers: config.headers,
+  //   data: config.data,
+  // });
 
   return axiosClient.request<T>(config);
 };

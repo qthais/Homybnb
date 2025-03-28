@@ -9,4 +9,11 @@ type User = {
     createdAt: Date;
     updatedAt: Date;
 }
+export type SafeUser = {
+    id: string;
+    email: string | null;
+    name: string | null;
+    image: string | null;
+  };
+  
 export default User

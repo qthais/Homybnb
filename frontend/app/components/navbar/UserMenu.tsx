@@ -5,13 +5,12 @@ import Avartar from '../Avartar'
 import MenuItem from './MenuItem'
 import useRegisterModal from '@/app/hooks/useRegisterModal'
 import useLoginModal from '@/app/hooks/useLoginModal'
-import User from '@/types/User'
+import { SafeUser } from '@/types/User'
 import { signOut } from 'next-auth/react'
 interface UserMenuProps {
-    currentUser?: User | null
+    currentUser?: SafeUser | null
 }
 const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
-    console.log(currentUser)
     const registerModal = useRegisterModal()
     const loginModal = useLoginModal()
     const [isOpen, setIsOpen] = useState(false)

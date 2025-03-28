@@ -3,6 +3,44 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axiosClient from "@/utils/axiosClient";
+import { JWT } from "next-auth/jwt";
+async function refreshToken(token: JWT): Promise<JWT> {
+  try {
+    const res = await axiosClient.post(
+      "/api/auth/refresh",
+      {},
+      {
+        headers: {
+          Authorization: `Refresh ${token.tokens.refreshToken}`,
+        },
+      }
+    );
+    const {
+      accessToken,
+      refreshToken: newRefreshToken,
+      expiresIn,
+    } = res.data.data.tokens;
+    console.log("refresh successful");
+    return {
+      ...token,
+      tokens: {
+        accessToken,
+        refreshToken: newRefreshToken,
+        expiresIn: expiresIn,
+      },
+      // string → number
+    };
+  } catch (err) {
+    console.error(
+      "❌ Failed to refresh token:",
+      err?.response?.data || err.message
+    );
+    return {
+      ...token,
+      error: "Login expired!",
+    };
+  }
+}
 export const authOptions: AuthOptions = {
   // Configure one or more authentication providers
   providers: [
@@ -25,30 +63,30 @@ export const authOptions: AuthOptions = {
           throw new Error("Invalid credentials");
         }
         let user;
-        try{
+        try {
           const response = await axiosClient.post("api/auth/login", {
             email: credentials.email,
             password: credentials.password,
           });
           if (response.data?.data?.user) {
             user = response.data.data.user;
-            const tokens=response.data.data.tokens
+            const tokens = response.data.data.tokens;
             return {
               ...user,
-              tokens
-            }
+              tokens,
+            };
           } else {
             throw new Error("User not found in response");
-        }
-        }catch(err){
-          throw err.response.data
+          }
+        } catch (err) {
+          throw err.response.data;
         }
       },
     }),
   ],
   pages: {
     signIn: "/",
-    signOut:"/"
+    signOut: "/",
   },
   debug: process.env.NODE_ENV === "development",
   session: {
@@ -57,7 +95,7 @@ export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async redirect() {
-      const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL  // Use environment variable for client-side URL
+      const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL; // Use environment variable for client-side URL
       return `${clientUrl}/`; // Redirect to the client-side URL (e.g., localhost:8080)
     },
     async signIn({ user, account }) {
@@ -75,36 +113,45 @@ export const authOptions: AuthOptions = {
             tokenType: account?.token_type,
             scope: account?.scope,
           });
-    
+
           const enrichedUser = res.data?.data?.user;
           const tokens = res.data?.data?.tokens;
-    
+
           if (!enrichedUser || !tokens) {
             console.error("OAuth login: user or tokens missing");
             return false;
           }
-          (user as any).user = enrichedUser;
-          (user as any).tokens = tokens;
+          const { id, name, email, image } = enrichedUser;
+          Object.assign(user, { id, name, email, image, tokens });
         } catch (error: any) {
           console.error("OAuth login failed:", error || error.message);
-          return false
+          return false;
         }
       }
-    
+
       return true;
     },
-    async jwt({token,user}){
-      if(user) {
-        return{
-        ...token,...user
-      }}
-      return token
+    async jwt({ token, user }) {
+      if (user) {
+        console.log("log in");
+        console.log({ user });
+        console.log({ token });
+        return {
+          ...token,
+          ...user,
+        };
+      }
+      if (Date.now() < parseInt(token.tokens.expiresIn)) {
+        console.log({ token });
+        return token;
+      }
+      return await refreshToken(token);
     },
-    async session({token,session}){
-      session.tokens=token.tokens
-      return session
-    }
-    
+    async session({ token, session }) {
+      session.tokens = token.tokens;
+      session.error = token.error;
+      return session;
+    },
   },
 };
 

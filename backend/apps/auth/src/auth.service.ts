@@ -50,9 +50,9 @@ export class AuthService {
         userId:existingUser.id
       }
     }
-    const {accessToken,refreshToken}=await this.issueToken(payload)
+    const {accessToken,refreshToken,expiresIn}=await this.issueToken(payload)
 
-    return {user:cleanUser(existingUser),tokens:{accessToken,refreshToken}};
+    return {user:cleanUser(existingUser),tokens:{accessToken,refreshToken,expiresIn}};
   }
   async register(registerDto: RegisterDto) {
     const { email, name, password } = registerDto;
@@ -124,7 +124,7 @@ export class AuthService {
             userId:existingUser.id
           }
         }
-        const {accessToken,refreshToken}=await this.issueToken(payload)
+        const {accessToken,refreshToken,expiresIn}=await this.issueToken(payload)
         const existingAccount = existingUser.accounts.find(
           (account) =>
             account.provider === provider &&
@@ -171,7 +171,7 @@ export class AuthService {
             }
           });
         }
-        return {user:cleanUser(updatedUser),tokens:{accessToken,refreshToken}};
+        return {user:cleanUser(updatedUser),tokens:{accessToken,refreshToken,expiresIn}};
       }
       const newUser = await this.prismaService.user.create({
         data: {
@@ -201,9 +201,9 @@ export class AuthService {
           userId:newUser.id
         }
       }
-      const {accessToken,refreshToken}=await this.issueToken(payload)
+      const {accessToken,refreshToken,expiresIn}=await this.issueToken(payload)
   
-      return {user:cleanUser(newUser),tokens:{accessToken,refreshToken}};
+      return {user:cleanUser(newUser),tokens:{accessToken,refreshToken,expiresIn}};
     }catch(error){
       console.log(error)
       if (error instanceof RpcException) {
@@ -222,19 +222,26 @@ export class AuthService {
         details:"Payload not provided!"
       })
     }
-    const {accessToken,refreshToken}=await this.issueToken(payload)
-    return {accessToken,refreshToken}
+    const {accessToken,refreshToken,expiresIn}=await this.issueToken(payload)
+    return {accessToken,refreshToken,expiresIn}
   }
 
   private async issueToken (payload:Payload){
+    const accessTokenExpiresInSec = 60 * 60; // 1 hour
+    const refreshTokenExpiresInSec = 60 * 60 * 24 * 7; 
+    const now=Math.floor(Date.now()/1000)
     const accessToken=await this.jwtService.signAsync(payload,{
-      expiresIn:'1h',
+      expiresIn:accessTokenExpiresInSec,
       secret:this.configService.get<string>('JWT_ACCESS_SECRET')
     })
     const refreshToken=await this.jwtService.signAsync(payload,{
-      expiresIn:'7d',
+      expiresIn:refreshTokenExpiresInSec,
       secret:this.configService.get<string>('JWT_REFRESH_SECRET')
     })
-    return {accessToken,refreshToken}
+    return {
+      accessToken,
+      refreshToken,
+      expiresIn:((now+accessTokenExpiresInSec)*1000).toString(),
+    }
   }
 }

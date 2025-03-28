@@ -27,6 +27,7 @@ export interface Sub {
 export interface Tokens {
   accessToken: string;
   refreshToken: string;
+  expiresIn: string;
 }
 
 export interface LoginOauthDto {

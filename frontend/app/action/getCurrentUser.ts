@@ -16,6 +16,7 @@ export default async function getCurrentUser() {
         })
         console.log('response',res.data)
         if(res.status==200){
+            console.log(session?.user)
             return session?.user
         }
         return null
