@@ -28,7 +28,7 @@ export class UsersService implements OnModuleInit {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const source= this.usersService.updateUser({id,...updateUserDto})
+    const source= this.usersService.updateUser({...updateUserDto,id})
     const user= await lastValueFrom(source)
     return user
   }

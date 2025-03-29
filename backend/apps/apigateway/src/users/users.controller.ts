@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   HttpCode,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from '@app/common/types/auth';
@@ -38,10 +39,10 @@ export class UsersController {
     const user = await this.usersService.findOne(email);
     return new ResponseDto(HttpStatus.OK, 'Found', { user });
   }
-
+  @UseGuards(AuthGuard)
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    const user= await this.usersService.update(id, updateUserDto);
+  async update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+    const user= await this.usersService.update( req.user.sub,updateUserDto);
     return new ResponseDto(HttpStatus.OK, 'Update successfully!', { user });
   }
 
