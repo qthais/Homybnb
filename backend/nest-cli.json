@@ -1,11 +1,12 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-
   "sourceRoot": "./",
   "entryFile": "src/main",
   "compilerOptions": {
-    "assets": ["**/*.proto"],
+    "assets": [
+      "**/*.proto"
+    ],
     "watchAssets": true,
     "deleteOutDir": true,
     "webpack": true,
@@ -21,7 +22,9 @@
       "sourceRoot": "./",
       "compilerOptions": {
         "tsConfigPath": "apps/apigateway/tsconfig.app.json",
-        "assets": ["proto/*.proto"],
+        "assets": [
+          "proto/*.proto"
+        ],
         "watchAssets": true
       }
     },
@@ -32,7 +35,10 @@
       "sourceRoot": "./",
       "compilerOptions": {
         "tsConfigPath": "apps/auth/tsconfig.app.json",
-        "assets": ["proto/*.proto", "prisma/schema.prisma"],
+        "assets": [
+          "proto/*.proto",
+          "prisma/schema.prisma"
+        ],
         "watchAssets": true
       }
     },
@@ -43,6 +49,20 @@
       "sourceRoot": "libs/common/src",
       "compilerOptions": {
         "tsConfigPath": "libs/common/tsconfig.lib.json"
+      }
+    },
+    "listing": {
+      "type": "application",
+      "root": "apps/listing",
+      "entryFile": "src/main",
+      "sourceRoot": "./",
+      "compilerOptions": {
+        "tsConfigPath": "apps/listing/tsconfig.app.json",
+        "assets": [
+          "proto/*.proto",
+          "prisma/schema.prisma"
+        ],
+        "watchAssets": true
       }
     }
   }

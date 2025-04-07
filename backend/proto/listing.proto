@@ -1,0 +1,37 @@
+syntax = "proto3";
+package listing;
+
+service ListingService{
+    rpc CreateListing (CreateListingDto) returns (ListingResponse);
+}
+
+message CreateListingDto {
+    string title = 1;
+    string description = 2;
+    string imageSrc = 3;
+    string category = 4;
+    int32 roomCount = 5;
+    int32 bathroomCount = 6;
+    int32 guestCount = 7;
+    string locationValue = 8;
+    string userId = 9;
+    int32 price = 10;
+}
+
+message ListingResponse {
+    int64 id = 1;
+    string title = 2;
+    string description = 3;
+    string imageSrc = 4;
+    string category = 5;
+    int32 roomCount = 6;
+    int32 bathroomCount = 7;
+    int32 guestCount = 8;
+    string locationValue = 9;
+    string userId = 10;
+    int32 price = 11;
+    string createdAt = 12;
+  }
+
+//   protoc --plugin=protoc-gen-ts_proto=.\node_modules\.bin\protoc-gen-ts_proto.cmd --ts_proto_out=.\ --ts_proto_opt=nestJs=true .\proto\listing.proto
+

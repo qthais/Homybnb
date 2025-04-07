@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated" // or customize path
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("LISTING_DATABASE_URL")
+}
+
+model Listing {
+  id             Int @id @default(autoincrement())
+  title          String
+  description    String
+  imageSrc       String
+  createdAt      DateTime @default(now())
+  category       String
+  roomCount      Int
+  bathroomCount  Int
+  guestCount     Int
+  locationValue  String
+  userId         String
+  price          Int
+}
