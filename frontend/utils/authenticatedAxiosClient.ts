@@ -2,7 +2,7 @@
 import { getSession } from '@/app/action/getCurrentUser';
 import axiosClient from './axiosClient';
 
-export const authenticatedRequest = async <T = any>(
+export const authenticatedAxios = async <T = any>(
   config: Parameters<typeof axiosClient.request>[0]
 ) => {
   const session = await getSession();

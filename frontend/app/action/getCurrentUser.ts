@@ -1,6 +1,5 @@
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { authenticatedRequest } from "@/utils/authenticatedAxiosClient";
-import axiosClient from "@/utils/axiosClient";
+import { authenticatedAxios } from "@/utils/authenticatedAxiosClient";
 import { getServerSession } from "next-auth";
 
 export async function getSession() {
@@ -10,7 +9,7 @@ export default async function getCurrentUser() {
     try{
         const session= await getSession()
 
-        const res=await authenticatedRequest({
+        const res=await authenticatedAxios({
             method:'get',
             url:'/api/auth/authCheck',
         })
