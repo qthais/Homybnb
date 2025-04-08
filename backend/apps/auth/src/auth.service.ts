@@ -4,7 +4,7 @@ import { LoginDto, LoginOauthDto, Payload, RegisterDto } from '@app/common';
 import { RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
 import * as bcrypt from 'bcryptjs';
-import cleanUser from '@app/common/constants/cleanUser';
+import cleanUser from '@app/common/functions/cleanUser';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 @Injectable()

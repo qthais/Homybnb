@@ -1,7 +1,6 @@
 import { AuthServiceController, AuthServiceControllerMethods, LoginDto, LoginOauthDto, LoginResponseDto, Payload, RegisterDto, Tokens, User } from '@app/common';
 import { Controller } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Observable } from 'rxjs';
 
 @Controller()
 @AuthServiceControllerMethods()

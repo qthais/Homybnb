@@ -15,6 +15,7 @@ import { JwtService } from '@nestjs/jwt';
           options: {
             package: AUTH_PACKAGE_NAME,
             protoPath: join(__dirname, '../auth.proto'),
+            url: '0.0.0.0:50051',
           },
         },
       ]),

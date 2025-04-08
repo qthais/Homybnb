@@ -8,8 +8,7 @@
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 
-export const protobufPackage = "listing";
-
+export const listingProtobufPackage = "listing";
 export interface CreateListingDto {
   title: string;
   description: string;
@@ -64,5 +63,4 @@ export function ListingServiceControllerMethods() {
     }
   };
 }
-
 export const LISTING_SERVICE_NAME = "ListingService";

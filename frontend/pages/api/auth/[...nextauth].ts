@@ -133,9 +133,6 @@ export const authOptions: AuthOptions = {
     },
     async jwt({ token, user }) {
       if (user) {
-        console.log("log in");
-        console.log({ user });
-        console.log({ token });
         return {
           ...token,
           ...user,

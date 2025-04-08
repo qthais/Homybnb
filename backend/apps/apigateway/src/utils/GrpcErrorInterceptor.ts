@@ -21,6 +21,9 @@ export class GrpcErrorInterceptor implements NestInterceptor {
             case status.ALREADY_EXISTS:
               httpStatus = HttpStatus.BAD_REQUEST;
               break;
+            case status.INVALID_ARGUMENT:
+              httpStatus=HttpStatus.BAD_REQUEST
+              break;
             case status.NOT_FOUND:
               httpStatus = HttpStatus.NOT_FOUND;
               break;
