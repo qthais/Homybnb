@@ -20,7 +20,6 @@ export default async function getCurrentUser() {
         }
         return null
     }catch(err){
-        console.error("getCurrentUser error:", err?.response || err?.message || err);
         return null
     }
     

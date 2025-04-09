@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/PrismaService';
-import { CreateListingDto } from '@app/common';
+import { CreateListingDto, GetListingsResponseDto } from '@app/common';
 import { RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
 import cleanListing from '@app/common/functions/cleanListing';
@@ -123,5 +123,37 @@ export class ListingService {
       },
     });
     return cleanListing(newListing)
+  }
+  async getListings(userId:string){
+    try {
+      const listings = await this.prismaService.listing.findMany({
+        where: {
+          userId: userId
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      });
+
+      // Check if listings were found
+      if (!listings || listings.length === 0) {
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          details: 'No listings found for this user',
+        });
+      }
+
+      return listings.map(listing => cleanListing(listing));
+    } catch (error) {
+      // Handle Prisma errors
+      if (error instanceof RpcException) {
+        throw error;
+      }
+      
+      throw new RpcException({
+        code: status.INTERNAL,
+        details: 'Failed to retrieve listings',
+      });
+    }
   }
 }

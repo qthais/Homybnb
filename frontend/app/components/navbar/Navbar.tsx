@@ -4,7 +4,7 @@ import Container from '../Container'
 import Logo from './Logo'
 import Search from './Search'
 import UserMenu from './UserMenu'
-import { SafeUser } from '@/types/User'
+import { SafeUser } from '@/types/SchemaType'
 import Categories from './Categories'
 interface NavbarProps {
     currentUser?: SafeUser | null

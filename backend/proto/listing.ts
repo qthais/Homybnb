@@ -10,6 +10,10 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "listing";
 
+export interface UserIdDto {
+  userId: string;
+}
+
 export interface CreateListingDto {
   title: string;
   description: string;
@@ -38,21 +42,31 @@ export interface ListingResponseDto {
   createdAt?: string | undefined;
 }
 
+export interface GetListingsResponseDto {
+  listings: ListingResponseDto[];
+}
+
 export const LISTING_PACKAGE_NAME = "listing";
 
 export interface ListingServiceClient {
   createListing(request: CreateListingDto): Observable<ListingResponseDto>;
+
+  getListings(request: UserIdDto): Observable<GetListingsResponseDto>;
 }
 
 export interface ListingServiceController {
   createListing(
     request: CreateListingDto,
   ): Promise<ListingResponseDto> | Observable<ListingResponseDto> | ListingResponseDto;
+
+  getListings(
+    request: UserIdDto,
+  ): Promise<GetListingsResponseDto> | Observable<GetListingsResponseDto> | GetListingsResponseDto;
 }
 
 export function ListingServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createListing"];
+    const grpcMethods: string[] = ["createListing", "getListings"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("ListingService", method)(constructor.prototype[method], method, descriptor);

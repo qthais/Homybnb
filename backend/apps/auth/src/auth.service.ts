@@ -205,7 +205,6 @@ export class AuthService {
   
       return {user:cleanUser(newUser),tokens:{accessToken,refreshToken,expiresIn}};
     }catch(error){
-      console.log(error)
       if (error instanceof RpcException) {
         throw error; // Propagate the original NOT_FOUND error
       }

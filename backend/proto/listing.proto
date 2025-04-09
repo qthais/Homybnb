@@ -3,8 +3,12 @@ package listing;
 
 service ListingService{
     rpc CreateListing (CreateListingDto) returns (ListingResponseDto);
+    rpc GetListings(UserIdDto) returns (GetListingsResponseDto);
 }
 
+message UserIdDto{
+    string userId=1;
+}
 message CreateListingDto {
     string title = 1;
     string description = 2;
@@ -33,5 +37,8 @@ message ListingResponseDto {
     optional string createdAt = 12;
   }
 
+  message GetListingsResponseDto{
+    repeated ListingResponseDto listings = 1;
+  }
 //   protoc --plugin=protoc-gen-ts_proto=.\node_modules\.bin\protoc-gen-ts_proto.cmd --ts_proto_out=.\ --ts_proto_opt=nestJs=true .\proto\listing.proto
 

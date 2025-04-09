@@ -5,7 +5,7 @@ import Avartar from '../Avartar'
 import MenuItem from './MenuItem'
 import useRegisterModal from '@/app/hooks/useRegisterModal'
 import useLoginModal from '@/app/hooks/useLoginModal'
-import { SafeUser } from '@/types/User'
+import { SafeUser } from '@/types/SchemaType'
 import { signOut } from 'next-auth/react'
 import useRentModal from '@/app/hooks/useRentModal'
 interface UserMenuProps {

@@ -11,7 +11,6 @@ import dynamic from 'next/dynamic'
 import Counter from '../inputs/Counter'
 import ImageUpload from '../inputs/ImageUpload'
 import Input from '../inputs/Input'
-import { authenticatedAxios } from '@/utils/authenticatedAxiosServer'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { useAuthenticatedAxios } from '@/utils/authenticatedAxiosClient'
@@ -38,7 +37,7 @@ const RentModal = () => {
   } = useForm<FieldValues>({
     defaultValues: {
       category: '',
-      location: null,
+      locationValue: null,
       guestCount: 1,
       roomCount:1,
       bathroomCount: 1,
@@ -50,7 +49,7 @@ const RentModal = () => {
   })
   const [isLoading,setIsLoading]=useState(false)
   const category = watch('category')
-  const location = watch('location')
+  const location = watch('locationValue')
   const guestCount = watch('guestCount')
   const roomCount=watch('roomCount')
   const bathroomCount=watch('bathroomCount')
@@ -85,7 +84,7 @@ const RentModal = () => {
     }
     setIsLoading(true)
     try{
-      const res= await axios.post('/api/listing/create',data)
+      const res= await axios.post('/api/listing/create',{...data,locationValue:location?.value})
       console.log(res)
       toast.success('Listing created!')
       router.refresh()
@@ -129,7 +128,7 @@ const RentModal = () => {
     bodyContent = (
       <div className='flex flex-col gap-8'>
         <Heading title='Where is your place located' subtitle='Help guests find you!' />
-        <CountrySelect value={location} onChange={(value) => { setCustomValue('location', value) }} />
+        <CountrySelect value={location} onChange={(value) => { setCustomValue('locationValue', value) }} />
         <Map
           center={location?.latlng}
         />
