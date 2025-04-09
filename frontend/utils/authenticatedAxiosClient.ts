@@ -1,26 +1,29 @@
-// utils/authenticatedRequest.ts
-import { getSession } from '@/app/action/getCurrentUser';
-import axiosClient from './axiosClient';
+// hooks/useAuthenticatedAxios.ts
+'use client'
 
-export const authenticatedAxios = async <T = any>(
-  config: Parameters<typeof axiosClient.request>[0]
-) => {
-  const session = await getSession();
-  // console.log("sessionInAuthRequest",session?.tokens)
-  const token = session?.tokens?.accessToken;
+import { useSession } from 'next-auth/react'
+import axiosClient from '@/utils/axiosClient'
+import axios, { AxiosInstance } from 'axios'
+import { useMemo } from 'react'
 
-  if (token) {
-    config.headers = {
-      ...config.headers,
-      Authorization: `Bearer ${token}`,
-    };
-  }
-  // console.log('🔍 Authenticated Request Config:', {
-  //   url: config.url,
-  //   method: config.method,
-  //   headers: config.headers,
-  //   data: config.data,
-  // });
+export function useAuthenticatedAxios(): AxiosInstance {
+  const { data: session } = useSession()
+  
+  // Create a memoized axios instance
+  const authAxios = useMemo(() => {
+    const instance = axios.create(axiosClient.defaults)
+    
+    // Add request interceptor that checks fresh session on every request
+    instance.interceptors.request.use((config) => {
+      const token = session?.tokens?.accessToken
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
+      return config
+    })
 
-  return axiosClient.request<T>(config);
-};
+    return instance
+  }, [session?.tokens?.accessToken]) 
+
+  return authAxios
+}

@@ -11,9 +11,10 @@ import dynamic from 'next/dynamic'
 import Counter from '../inputs/Counter'
 import ImageUpload from '../inputs/ImageUpload'
 import Input from '../inputs/Input'
-import { authenticatedAxios } from '@/utils/authenticatedAxiosClient'
+import { authenticatedAxios } from '@/utils/authenticatedAxiosServer'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import { useAuthenticatedAxios } from '@/utils/authenticatedAxiosClient'
 enum STEPS {
   CATEGORY = 0,
   LOCATION = 1,
@@ -23,6 +24,7 @@ enum STEPS {
   PRICE = 5,
 }
 const RentModal = () => {
+  const axios=useAuthenticatedAxios()
   const router=useRouter()
   const {
     register,
@@ -83,17 +85,15 @@ const RentModal = () => {
     }
     setIsLoading(true)
     try{
-      const res= await authenticatedAxios({
-        method:'post',
-        url:'/api/listings',
-        data:data,
-      })
+      const res= await axios.post('/api/listing/create',data)
+      console.log(res)
       toast.success('Listing created!')
       router.refresh()
       reset()
       setStep(STEPS.CATEGORY)
       rentModal.onClose()
     }catch(err){
+      console.log(err)
       toast.error(err?.response?.data.message||"Something went wrong!")
     }finally{
       setIsLoading(false)

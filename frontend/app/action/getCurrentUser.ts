@@ -1,5 +1,5 @@
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { authenticatedAxios } from "@/utils/authenticatedAxiosClient";
+import { authenticatedAxios } from "@/utils/authenticatedAxiosServer";
 import { getServerSession } from "next-auth";
 
 export async function getSession() {

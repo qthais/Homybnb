@@ -8,6 +8,7 @@ import ToasterProvider from './providers/ToasterProvider'
 import LoginModal from './components/modals/LoginModal'
 import getCurrentUser from './action/getCurrentUser'
 import RentModal from './components/modals/RentModal'
+import SessionProviderWrapper from './components/SessionProviderWrapper'
 
 
 export const metadata: Metadata = {
@@ -27,6 +28,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={font.className}>
+        <SessionProviderWrapper>
         <ClientOnly>
           <RentModal/>
           <RegisterModal/>
@@ -34,6 +36,7 @@ export default async function RootLayout({
           <Navbar currentUser={currentUser} />
           <ToasterProvider/>
         </ClientOnly>
+        </SessionProviderWrapper>
         {children}
         </body>
     </html>
