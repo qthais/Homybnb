@@ -3,19 +3,27 @@ import { ListingService } from './listing.service';
 import {
   CreateListingDto,
   GetListingsResponseDto,
+  ListingIdDto,
   ListingResponseDto,
   ListingServiceController,
   ListingServiceControllerMethods,
   UserIdDto,
 } from '@app/common';
-import { Observable } from 'rxjs';
 
 @Controller()
 @ListingServiceControllerMethods()
 export class ListingController implements ListingServiceController {
   constructor(private readonly listingService: ListingService) {}
-  async getListings(userIdDto: UserIdDto): Promise<GetListingsResponseDto> {
-    const listing = await this.listingService.getListings(userIdDto.userId);
+  async getListingById(listingDto: ListingIdDto): Promise<ListingResponseDto>  {
+    const listing = await this.listingService.getLisingById(listingDto.listingId)
+    return listing
+  }
+  async getListingsOfUser(userIdDto: UserIdDto): Promise<GetListingsResponseDto>  {
+    const listing = await this.listingService.getLisingsOfUser(userIdDto.userId);
+    return { listings: listing };
+  }
+  async getListings(): Promise<GetListingsResponseDto> {
+    const listing = await this.listingService.getListings();
     return { listings: listing };
   }
 

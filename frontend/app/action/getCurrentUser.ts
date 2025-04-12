@@ -14,9 +14,6 @@ export default async function getCurrentUser() {
             url:'/api/auth/authCheck',
         })
         if(res.status==200){
-            console.log({
-                sessionUser:session?.user
-            })
             return session?.user
         }
         return null

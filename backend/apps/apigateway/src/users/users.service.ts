@@ -21,8 +21,8 @@ export class UsersService implements OnModuleInit {
     return this.usersService.findAllUsers({});
   }
 
-  async findOne(email: string) {
-    const source= this.usersService.findOneUser({email})
+  async findOne(id: string) {
+    const source= this.usersService.findOneUser({id})
     const user= await lastValueFrom(source)
     return user
   }

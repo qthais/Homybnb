@@ -9,7 +9,8 @@ const cleanUser = (user: any) => {
     email: user.email ?? undefined,
     image: user.image ?? undefined,
     hashedPassword: '',
-    accounts: user.accounts ?? [],
+    createdAt: user.createdAt.toISOString(),
+    updatedAt: user.updatedAt.toISOString()
   };
 };
 

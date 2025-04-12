@@ -3,11 +3,17 @@ package listing;
 
 service ListingService{
     rpc CreateListing (CreateListingDto) returns (ListingResponseDto);
-    rpc GetListings(UserIdDto) returns (GetListingsResponseDto);
+    rpc GetListings(Empty) returns (GetListingsResponseDto);
+    rpc GetListingsOfUser(UserIdDto) returns (GetListingsResponseDto);
+    rpc GetListingById(ListingIdDto) returns (ListingResponseDto);
 }
 
+message Empty {}
 message UserIdDto{
     string userId=1;
+}
+message ListingIdDto{
+  int32 listingId=1;
 }
 message CreateListingDto {
     string title = 1;

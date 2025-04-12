@@ -124,12 +124,73 @@ export class ListingService {
     });
     return cleanListing(newListing)
   }
-  async getListings(userId:string){
+  async getLisingsOfUser(userId:string){
     try {
       const listings = await this.prismaService.listing.findMany({
         where: {
           userId: userId
         },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      });
+
+      // Check if listings were found
+      if (!listings || listings.length === 0) {
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          details: 'No listings found for this user',
+        });
+      }
+
+      return listings.map(listing => cleanListing(listing));
+    } catch (error) {
+      // Handle Prisma errors
+      if (error instanceof RpcException) {
+        throw error;
+      }
+      
+      throw new RpcException({
+        code: status.INTERNAL,
+        details: 'Failed to retrieve listings',
+      });
+    }
+  }
+
+  async getLisingById(listingId:number){
+    try {
+      const listing = await this.prismaService.listing.findUnique({
+        where: {
+          id:listingId
+        },
+      });
+
+      // Check if listing were found
+      if (!listing ) {
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          details: 'No listing found',
+        });
+      }
+
+      return cleanListing(listing);
+    } catch (error) {
+      // Handle Prisma errors
+      if (error instanceof RpcException) {
+        throw error;
+      }
+      
+      throw new RpcException({
+        code: status.INTERNAL,
+        details: 'Failed to retrieve listings',
+      });
+    }
+  }
+
+  
+  async getListings(){
+    try {
+      const listings = await this.prismaService.listing.findMany({
         orderBy: {
           createdAt: 'desc'
         }

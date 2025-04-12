@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ListingService } from './listing.service';
 import { ListingController } from './listing.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { LISTING_PACKAGE_NAME } from '@app/common';
+import { AUTH_PACKAGE_NAME, LISTING_PACKAGE_NAME } from '@app/common';
 import { join } from 'path';
 import { JwtService } from '@nestjs/jwt';
 
@@ -18,9 +18,18 @@ import { JwtService } from '@nestjs/jwt';
           url: '0.0.0.0:50052',
         },
       },
+      {
+        name: AUTH_PACKAGE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          package: AUTH_PACKAGE_NAME,
+          protoPath: join(__dirname, '../auth.proto'),
+          url: '0.0.0.0:50051',
+        },
+      },
     ]),
   ],
   controllers: [ListingController],
-  providers: [ListingService,JwtService],
+  providers: [ListingService, JwtService],
 })
 export class ListingModule {}

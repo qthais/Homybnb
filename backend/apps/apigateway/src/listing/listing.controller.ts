@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, ParseIntPipe, Post, Request, UseGuards } from '@nestjs/common';
 import { ListingService } from './listing.service';
 import { AuthGuard } from '../guards/jwt.guard';
 import { ResponseDto } from '../utils/types/HttpResponse';
@@ -15,11 +15,16 @@ export class ListingController {
     const res=await this.listingService.createListing({...createListingDto,userId:id})
     return new ResponseDto(HttpStatus.OK,"Creating listing successfully",{listing:res})
   }
-  @UseGuards(AuthGuard)
+
   @Get()
-  async getListings(@Request() req:ExtendRequest){
-    const id=req.user.sub.userId
-    const res= await this.listingService.getListings({userId:id})
+  async getListings(){
+    const res= await this.listingService.getListings()
     return new ResponseDto(HttpStatus.OK,"Retrieving listings successfully",res)
+  }
+
+  @Get('/:id')
+  async getListingById(@Param('id',ParseIntPipe) id:number){
+    const res= await this.listingService.getListingById(id)
+    return new ResponseDto(HttpStatus.OK,"Retrieving listing successfully",{listing:res})
   }
 }

@@ -10,8 +10,15 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "listing";
 
+export interface Empty {
+}
+
 export interface UserIdDto {
   userId: string;
+}
+
+export interface ListingIdDto {
+  listingId: number;
 }
 
 export interface CreateListingDto {
@@ -51,7 +58,11 @@ export const LISTING_PACKAGE_NAME = "listing";
 export interface ListingServiceClient {
   createListing(request: CreateListingDto): Observable<ListingResponseDto>;
 
-  getListings(request: UserIdDto): Observable<GetListingsResponseDto>;
+  getListings(request: Empty): Observable<GetListingsResponseDto>;
+
+  getListingsOfUser(request: UserIdDto): Observable<GetListingsResponseDto>;
+
+  getListingById(request: ListingIdDto): Observable<ListingResponseDto>;
 }
 
 export interface ListingServiceController {
@@ -60,13 +71,21 @@ export interface ListingServiceController {
   ): Promise<ListingResponseDto> | Observable<ListingResponseDto> | ListingResponseDto;
 
   getListings(
+    request: Empty,
+  ): Promise<GetListingsResponseDto> | Observable<GetListingsResponseDto> | GetListingsResponseDto;
+
+  getListingsOfUser(
     request: UserIdDto,
   ): Promise<GetListingsResponseDto> | Observable<GetListingsResponseDto> | GetListingsResponseDto;
+
+  getListingById(
+    request: ListingIdDto,
+  ): Promise<ListingResponseDto> | Observable<ListingResponseDto> | ListingResponseDto;
 }
 
 export function ListingServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createListing", "getListings"];
+    const grpcMethods: string[] = ["createListing", "getListings", "getListingsOfUser", "getListingById"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("ListingService", method)(constructor.prototype[method], method, descriptor);

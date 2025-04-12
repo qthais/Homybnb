@@ -97,7 +97,7 @@ export interface UpdateUserDto {
 }
 
 export interface FindOneUserDto {
-  email: string;
+  id: string;
 }
 
 export interface RemoveUserDto {

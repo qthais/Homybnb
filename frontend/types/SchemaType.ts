@@ -13,7 +13,7 @@ export type SafeUser = {
     id: string;
     email: string | null;
     name: string | null;
-    image: string | null;
+    image?: string | null;
     favoriteIds?:number[]|null
   };
   export interface Listing {

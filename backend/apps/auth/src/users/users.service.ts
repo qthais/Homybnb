@@ -53,16 +53,16 @@ export class UsersService {
     }
   }
 
-  async findOne(email: string) {
-    if (!email) {
+  async findOne(id: string) {
+    if (!id) {
       throw new RpcException({
         code: status.INVALID_ARGUMENT,
-        details: 'Email is not provided!',
+        details: 'ID is not provided!',
       });
     }
     try {
       const user = await this.prismaService.user.findUnique({
-        where: { email },
+        where: { id },
       });
 
       if (!user) {

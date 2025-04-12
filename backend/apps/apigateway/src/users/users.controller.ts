@@ -30,11 +30,10 @@ export class UsersController {
   findAll() {
     return this.usersService.findAll();
   }
-  @UseGuards(AuthGuard)
   @Post('/find')
   @HttpCode(200)
-  async findOne(@Body('email') email: string) {
-    const user = await this.usersService.findOne(email);
+  async findOne(@Body('id') id: string) {
+    const user = await this.usersService.findOne(id);
     return new ResponseDto(HttpStatus.OK, 'Found', { user });
   }
 
