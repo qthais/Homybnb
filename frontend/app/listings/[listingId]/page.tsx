@@ -8,7 +8,8 @@ interface IParams {
   listingId?: number
 }
 const ListingPage = async ({ params }: { params: IParams }) => {
-  const res = await axiosClient.get(`/api/listing/${params.listingId}`)
+  const {listingId}= await params
+  const res = await axiosClient.get(`/api/listing/${listingId}`)
   const listing = res.data.data.listing
   const currentUser=await getCurrentUser()
   if (!listing) {

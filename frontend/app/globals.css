@@ -14,3 +14,12 @@ body,
 .leaflet-top{
   z-index: 0 !important;
 }
+
+.rdrMonth{
+  margin: auto;
+  width: 100%;
+}
+.rdrCalendarWrapper{
+  font-size: 15px !important;
+  width: 100% !important;
+}
