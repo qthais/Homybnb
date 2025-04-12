@@ -8,7 +8,7 @@
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 
-export const uuthProtobufPackage = "auth";
+export const authProtobufPackage = "auth";
 
 export interface LoginResponseDto {
   user: User | undefined;
@@ -59,12 +59,12 @@ export interface User {
   emailVerified?: string | undefined;
   image?: string | undefined;
   hashedPassword?: string | undefined;
-  createdAt?: string | undefined;
-  updatedAt?:
+  favoriteIds: number[];
+  createdAt?:
     | string
     | undefined;
-  /** repeated string favoriteIds = 9;  // Array of ObjectIds */
-  accounts: Account[];
+  /** repeated Account accounts = 10;   // User can have multiple accounts */
+  updatedAt?: string | undefined;
 }
 
 /** DTOs for User */
@@ -94,6 +94,8 @@ export interface UpdateUserDto {
     | undefined;
   /** repeated string favoriteIds = 5; */
   image?: string | undefined;
+  favoriteIds: number[];
+  isEmptyFavoriteIds?: boolean | undefined;
 }
 
 export interface FindOneUserDto {

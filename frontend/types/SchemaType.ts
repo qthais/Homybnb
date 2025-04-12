@@ -14,6 +14,7 @@ export type SafeUser = {
     email: string | null;
     name: string | null;
     image: string | null;
+    favoriteIds?:number[]|null
   };
   export interface Listing {
     id: number;

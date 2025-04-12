@@ -8,7 +8,7 @@ const cleanUser = (user: any) => {
     name: user.name ?? undefined,
     email: user.email ?? undefined,
     image: user.image ?? undefined,
-    hashedPassword: user.hashedPassword ?? undefined,
+    hashedPassword: '',
     accounts: user.accounts ?? [],
   };
 };

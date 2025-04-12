@@ -88,7 +88,7 @@ export const authOptions: AuthOptions = {
     signIn: "/",
     signOut: "/",
   },
-  debug: process.env.NODE_ENV === "development",
+  debug: process.env.NODE_ENV !== "development",
   session: {
     strategy: "jwt",
   },
@@ -121,8 +121,8 @@ export const authOptions: AuthOptions = {
             console.error("OAuth login: user or tokens missing");
             return false;
           }
-          const { id, name, email, image } = enrichedUser;
-          Object.assign(user, { id, name, email, image, tokens });
+          const { id, name, email, image,favoriteIds } = enrichedUser;
+          Object.assign(user, { id, name, email, image, favoriteIds, tokens });
         } catch (error: any) {
           console.error("OAuth login failed:", error || error.message);
           return false;
@@ -131,20 +131,31 @@ export const authOptions: AuthOptions = {
 
       return true;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user,trigger,session }) {
       if (user) {
         return {
           ...token,
-          ...user,
-        };
+          user: {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            favoriteIds: user.favoriteIds || [],
+          },
+          tokens: user.tokens, 
+        } as JWT;
+      }
+      if (trigger === "update" && session?.favoriteIds) {
+        token.user.favoriteIds = session.favoriteIds as number[];
+        return token;
       }
       if (Date.now() < parseInt(token.tokens.expiresIn)) {
-        console.log({ token });
-        return token;
+        return token as JWT;
       }
       return await refreshToken(token);
     },
     async session({ token, session }) {
+      session.user=token.user
       session.tokens = token.tokens;
       session.error = token.error;
       return session;

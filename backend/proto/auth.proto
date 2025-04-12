@@ -77,10 +77,10 @@ message User {
     optional string emailVerified = 4;
     optional string image = 5;
     optional string hashedPassword = 6;
-    optional string createdAt = 7;
-    optional string updatedAt = 8;
-    // repeated string favoriteIds = 9;  // Array of ObjectIds
-    repeated Account accounts = 10;   // User can have multiple accounts
+    repeated int32 favoriteIds = 7;
+    optional string createdAt = 8;
+    optional string updatedAt = 9;
+    // repeated Account accounts = 10;   // User can have multiple accounts
 }
 
 // DTOs for User
@@ -107,6 +107,8 @@ message UpdateUserDto {
     optional string email = 3;
     optional string password = 4;
     optional string image=5;
+    repeated int32 favoriteIds=6;
+    optional bool isEmptyFavoriteIds = 7;
     // repeated string favoriteIds = 5;
 }
 

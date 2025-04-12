@@ -11,6 +11,7 @@ export class AuthService {
   async login(loginDto:LoginDto){
     const source= this.client.getService<AuthServiceClient>(AUTH_SERVICE_NAME).login(loginDto)
     const res= await lastValueFrom(source)
+    console.log(res.user)
     return res
   }
   async register(registerDto:RegisterDto){

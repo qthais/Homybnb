@@ -6,12 +6,17 @@ import ListingCard from "./components/listings/ListingCard";
 import getCurrentUser from "./action/getCurrentUser";
 
 export default async function Home() {
-  const res= await authenticatedAxios({
-    url:'/api/listing',
-    method:"GET"
-  })
+  let listings
+  try{
+    const res= await authenticatedAxios({
+      url:'/api/listing',
+      method:"GET"
+    })
+    listings=res.data.data.listings
+  }catch(err){
+    listings=[]
+  }
   const currentUser=await getCurrentUser()
-  const listings=res.data.data.listings
 
   if(listings.length==0){
     return(

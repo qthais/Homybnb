@@ -30,6 +30,9 @@ export class UsersController implements UserServiceController {
 
   // ✅ Update User
   async updateUser(updateUserDto: UpdateUserDto) {
+    if(updateUserDto.isEmptyFavoriteIds){
+      updateUserDto.favoriteIds=[]
+    }
     return await this.usersService.update(updateUserDto.id, updateUserDto);
   }
 

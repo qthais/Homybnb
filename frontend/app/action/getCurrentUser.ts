@@ -13,9 +13,10 @@ export default async function getCurrentUser() {
             method:'get',
             url:'/api/auth/authCheck',
         })
-        console.log('response',res.data)
         if(res.status==200){
-            console.log(session?.user)
+            console.log({
+                sessionUser:session?.user
+            })
             return session?.user
         }
         return null

@@ -59,12 +59,12 @@ export interface User {
   emailVerified?: string | undefined;
   image?: string | undefined;
   hashedPassword?: string | undefined;
-  createdAt?: string | undefined;
-  updatedAt?:
+  favoriteIds: number[];
+  createdAt?:
     | string
     | undefined;
-  /** repeated string favoriteIds = 9;  // Array of ObjectIds */
-  accounts: Account[];
+  /** repeated Account accounts = 10;   // User can have multiple accounts */
+  updatedAt?: string | undefined;
 }
 
 /** DTOs for User */
@@ -89,11 +89,11 @@ export interface UpdateUserDto {
   id: string;
   name?: string | undefined;
   email?: string | undefined;
-  password?:
-    | string
-    | undefined;
-  /** repeated string favoriteIds = 5; */
+  password?: string | undefined;
   image?: string | undefined;
+  favoriteIds: number[];
+  /** repeated string favoriteIds = 5; */
+  isEmptyFavoriteIds?: boolean | undefined;
 }
 
 export interface FindOneUserDto {

@@ -1,3 +1,4 @@
+import cleanUser from '@app/common/functions/cleanUser';
 import { CreateUserDto, UpdateUserDto, User } from '@app/common/types/auth';
 import { status } from '@grpc/grpc-js';
 import { BadRequestException, Injectable } from '@nestjs/common';
@@ -17,7 +18,7 @@ export class UsersService {
       throw new RpcException({
         code: status.ALREADY_EXISTS,
         details: 'Email already in use',
-      }); 
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password!, 10);
@@ -29,10 +30,9 @@ export class UsersService {
           email,
           hashedPassword,
         },
-        include: { accounts: true },
       });
 
-      return this.cleanUser(user);
+      return cleanUser(user);
     } catch (err) {
       throw new RpcException({
         code: status.INTERNAL,
@@ -42,11 +42,9 @@ export class UsersService {
   }
   async findAll() {
     try {
-      const users = await this.prismaService.user.findMany({
-        include: { accounts: true },
-      });
+      const users = await this.prismaService.user.findMany({});
 
-      return { users: users.map(this.cleanUser) };
+      return { users: users.map(cleanUser) };
     } catch (error) {
       throw new RpcException({
         code: status.INTERNAL,
@@ -56,16 +54,15 @@ export class UsersService {
   }
 
   async findOne(email: string) {
-    if(!email){
+    if (!email) {
       throw new RpcException({
-        code:status.INVALID_ARGUMENT,
-        details:"Email is not provided!"
-      })
+        code: status.INVALID_ARGUMENT,
+        details: 'Email is not provided!',
+      });
     }
     try {
       const user = await this.prismaService.user.findUnique({
         where: { email },
-        include: { accounts: true },
       });
 
       if (!user) {
@@ -75,7 +72,7 @@ export class UsersService {
         });
       }
 
-      return this.cleanUser(user);
+      return cleanUser(user);
     } catch (error) {
       if (error instanceof RpcException) {
         throw error; // Propagate the original NOT_FOUND error
@@ -88,30 +85,38 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
+    console.log(updateUserDto.favoriteIds)
     try {
-      const data: any = {
-        name: updateUserDto.name,
-        email: updateUserDto.email,
-        ...(updateUserDto.password && {
-          hashedPassword: await bcrypt.hash(updateUserDto.password, 10),
-        }),
-      };
+      const data: any = {};
+
+      if (updateUserDto.name !== undefined) {
+        data.name = updateUserDto.name;
+      }
+
+      if (updateUserDto.email) {
+        throw new RpcException({
+          code: status.INVALID_ARGUMENT,
+          details: 'Can not change email!',
+        });
+      }
+
+      if (updateUserDto.password !== undefined) {
+        data.hashedPassword = await bcrypt.hash(updateUserDto.password, 10);
+      }
+
+      if (updateUserDto.favoriteIds !== undefined) {
+        data.favoriteIds = updateUserDto.favoriteIds;
+      }
 
       const updatedUser = await this.prismaService.user.update({
         where: { id },
         data,
-        include: { accounts: true },
       });
-
-      return this.cleanUser(updatedUser);
+      return cleanUser(updatedUser);
     } catch (error) {
-      if (error.code === 'P2025') {
-        throw new RpcException({
-          code: status.NOT_FOUND,
-          details: 'User not found',
-        });
+      if (error instanceof RpcException) {
+        throw error; // Propagate the original NOT_FOUND error
       }
-
       throw new RpcException({
         code: status.INTERNAL,
         details: 'Error updating user',
@@ -123,12 +128,10 @@ export class UsersService {
     try {
       const deletedUser = await this.prismaService.user.delete({
         where: { id },
-        include: { accounts: true },
       });
 
-      return this.cleanUser(deletedUser);
+      return cleanUser(deletedUser);
     } catch (error) {
-
       if (error.code === 'P2025') {
         throw new RpcException({
           code: status.NOT_FOUND,
@@ -141,14 +144,5 @@ export class UsersService {
         details: 'Error deleting user',
       });
     }
-  }
-  private cleanUser(user: any): User {
-    return {
-      ...user,
-      name: user.name ?? undefined,
-      email: user.email ?? undefined,
-      image: user.image ?? undefined,
-      hashedPassword: user.hashedPassword ?? undefined,
-    };
   }
 }

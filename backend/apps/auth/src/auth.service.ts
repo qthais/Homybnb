@@ -24,9 +24,6 @@ export class AuthService {
       where: {
         email: loginDto.email,
       },
-      include: {
-        accounts: true,
-      },
     });
     if (!existingUser) {
       throw new RpcException({
@@ -51,7 +48,6 @@ export class AuthService {
       }
     }
     const {accessToken,refreshToken,expiresIn}=await this.issueToken(payload)
-
     return {user:cleanUser(existingUser),tokens:{accessToken,refreshToken,expiresIn}};
   }
   async register(registerDto: RegisterDto) {
@@ -113,9 +109,9 @@ export class AuthService {
     try{
       const existingUser = await this.prismaService.user.findUnique({
         where: { email },
-        include: {
-          accounts: true,
-        },
+        include:{
+          accounts:true
+        }
       });
       if (existingUser) {
         const payload={
@@ -190,9 +186,6 @@ export class AuthService {
               scope,
             },
           },
-        },
-        include: {
-          accounts: true,
         },
       });
       const payload={
