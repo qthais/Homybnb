@@ -64,6 +64,20 @@
         ],
         "watchAssets": true
       }
+    },
+    "reservation": {
+      "type": "application",
+      "root": "apps/reservation",
+      "entryFile": "src/main",
+      "sourceRoot": "./",
+      "compilerOptions": {
+        "tsConfigPath": "apps/reservation/tsconfig.app.json",
+        "assets": [
+          "proto/reservation.proto",
+          "prisma/schema.prisma"
+        ],
+        "watchAssets": true
+      }
     }
   }
 }

@@ -1,0 +1,24 @@
+syntax = "proto3";
+package reservation;
+service ReservationService{
+    rpc CreateReservation(CreateReservationDto) returns (ReservationDto);
+}
+
+message CreateReservationDto{
+    string userId = 1;
+    int32 listingId = 2;
+    string startDate = 3; 
+    string endDate = 4;
+    int32 totalPrice = 5;
+}
+
+message ReservationDto{
+    int32 id = 1;
+    string userId = 2;
+    int32 listingId = 3;
+    string startDate = 4;
+    string endDate = 5;
+    int32 totalPrice = 6;
+    string createdAt = 7;
+}
+// protoc --plugin=protoc-gen-ts_proto=.\node_modules\.bin\protoc-gen-ts_proto.cmd --ts_proto_out=.\ --ts_proto_opt=nestJs=true .\proto\reservation.proto
