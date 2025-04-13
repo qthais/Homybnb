@@ -6,34 +6,34 @@ import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
-  private usersService:UserServiceClient
+  private userClient:UserServiceClient
   constructor(
     @Inject(AUTH_PACKAGE_NAME) private readonly client:ClientGrpc
   ){}
   onModuleInit() {
-      this.usersService=this.client.getService<UserServiceClient>(USER_SERVICE_NAME)
+      this.userClient=this.client.getService<UserServiceClient>(USER_SERVICE_NAME)
   }
   create(createUserDto: CreateUserDto) {
-    return this.usersService.createUser(createUserDto)
+    return this.userClient.createUser(createUserDto)
   }
 
   findAll() {
-    return this.usersService.findAllUsers({});
+    return this.userClient.findAllUsers({});
   }
 
   async findOne(id: string) {
-    const source= this.usersService.findOneUser({id})
+    const source= this.userClient.findOneUser({id})
     const user= await lastValueFrom(source)
     return user
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const source= this.usersService.updateUser({...updateUserDto,id})
+    const source= this.userClient.updateUser({...updateUserDto,id})
     const user= await lastValueFrom(source)
     return user
   }
 
   remove(id: string) {
-    return this.usersService.removeUser({id})
+    return this.userClient.removeUser({id})
   }
 }

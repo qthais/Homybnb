@@ -2,8 +2,26 @@ syntax = "proto3";
 package reservation;
 service ReservationService{
     rpc CreateReservation(CreateReservationDto) returns (ReservationDto);
+    rpc GetReservationById(ReservationIdDto) returns (ReservationDto);
+    rpc GetReservationByOption (ReservationOptionDto) returns (ReservationsDto);
 }
 
+message ReservationOptionDto{
+    optional int32 listingId=1;
+    optional string userId=2;
+    optional ListingFilter listing=3;
+}
+
+message ListingFilter{
+    optional string userId=1;
+}
+
+message ReservationsDto{
+    repeated ReservationDto reservations=1;
+}
+message ReservationIdDto{
+    int32 reservationId=1;
+}
 message CreateReservationDto{
     string userId = 1;
     int32 listingId = 2;
@@ -20,5 +38,33 @@ message ReservationDto{
     string endDate = 5;
     int32 totalPrice = 6;
     string createdAt = 7;
+    optional ListingResponseDto listing =8;
 }
+message ListingResponseDto {
+    int32 id = 1;
+    string title = 2;
+    string description = 3;
+    string imageSrc = 4;
+    string category = 5;
+    int32 roomCount = 6;
+    int32 bathroomCount = 7;
+    int32 guestCount = 8;
+    string locationValue = 9;
+    string userId = 10;
+    int32 price = 11;
+    optional string createdAt = 12;
+    optional User user=13;
+  }
+  message User {
+    optional string id = 1;
+    optional string name = 2;
+    optional string email = 3;
+    optional string emailVerified = 4;
+    optional string image = 5;
+    optional string hashedPassword = 6;
+    repeated int32 favoriteIds = 7;
+    optional string createdAt = 8;
+    optional string updatedAt = 9;
+    // repeated Account accounts = 10;   // User can have multiple accounts
+  }
 // protoc --plugin=protoc-gen-ts_proto=.\node_modules\.bin\protoc-gen-ts_proto.cmd --ts_proto_out=.\ --ts_proto_opt=nestJs=true .\proto\reservation.proto

@@ -10,6 +10,24 @@ import { Observable } from "rxjs";
 
 export const reservationProtobufPackage = "reservation";
 
+export interface ReservationOptionDto {
+  listingId?: number | undefined;
+  userId?: string | undefined;
+  listing?: ListingFilter | undefined;
+}
+
+export interface ListingFilter {
+  userId?: string | undefined;
+}
+
+export interface ReservationsDto {
+  reservations: ReservationDto[];
+}
+
+export interface ReservationIdDto {
+  reservationId: number;
+}
+
 export interface CreateReservationDto {
   userId: string;
   listingId: number;
@@ -26,23 +44,65 @@ export interface ReservationDto {
   endDate: string;
   totalPrice: number;
   createdAt: string;
+  listing?: ListingResponseDto | undefined;
+}
+
+interface ListingResponseDto {
+  id: number;
+  title: string;
+  description: string;
+  imageSrc: string;
+  category: string;
+  roomCount: number;
+  bathroomCount: number;
+  guestCount: number;
+  locationValue: string;
+  userId: string;
+  price: number;
+  createdAt?: string | undefined;
+  user?: User | undefined;
+}
+
+interface User {
+  id?: string | undefined;
+  name?: string | undefined;
+  email?: string | undefined;
+  emailVerified?: string | undefined;
+  image?: string | undefined;
+  hashedPassword?: string | undefined;
+  favoriteIds: number[];
+  createdAt?:
+    | string
+    | undefined;
+  /** repeated Account accounts = 10;   // User can have multiple accounts */
+  updatedAt?: string | undefined;
 }
 
 export const RESERVATION_PACKAGE_NAME = "reservation";
 
 export interface ReservationServiceClient {
   createReservation(request: CreateReservationDto): Observable<ReservationDto>;
+
+  getReservationById(request: ReservationIdDto): Observable<ReservationDto>;
+
+  getReservationByOption(request: ReservationOptionDto): Observable<ReservationsDto>;
 }
 
 export interface ReservationServiceController {
   createReservation(
     request: CreateReservationDto,
   ): Promise<ReservationDto> | Observable<ReservationDto> | ReservationDto;
+
+  getReservationById(request: ReservationIdDto): Promise<ReservationDto> | Observable<ReservationDto> | ReservationDto;
+
+  getReservationByOption(
+    request: ReservationOptionDto,
+  ): Promise<ReservationsDto> | Observable<ReservationsDto> | ReservationsDto;
 }
 
 export function ReservationServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createReservation"];
+    const grpcMethods: string[] = ["createReservation", "getReservationById", "getReservationByOption"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("ReservationService", method)(constructor.prototype[method], method, descriptor);

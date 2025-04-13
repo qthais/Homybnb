@@ -7,21 +7,21 @@ import getCurrentUser from "./action/getCurrentUser";
 
 export default async function Home() {
   let listings
-  try{
-    const res= await authenticatedAxios({
-      url:'/api/listing',
-      method:"GET"
+  try {
+    const res = await authenticatedAxios({
+      url: '/api/listing',
+      method: "GET"
     })
-    listings=res.data.data.listings
-  }catch(err){
-    listings=[]
+    listings = res.data.data.listings
+  } catch (err) {
+    listings = []
   }
-  const currentUser=await getCurrentUser()
+  const currentUser = await getCurrentUser()
 
-  if(listings.length==0){
-    return(
+  if (listings.length == 0) {
+    return (
       <ClientOnly>
-        <EmptyState showReset/>
+        <EmptyState showReset />
       </ClientOnly>
     )
   }
@@ -39,12 +39,12 @@ export default async function Home() {
         2xl:grid-cols-6
         gap-8
         ">
-          {listings.map((listing:any)=>{
+          {listings.map((listing: any) => {
             return (
-              <ListingCard    
-              currentUser={currentUser}          
-              key={listing.id}
-              data={listing}
+              <ListingCard
+                currentUser={currentUser}
+                key={listing.id}
+                data={listing}
               />
             )
           })}

@@ -4,34 +4,33 @@ import {
   LISTING_SERVICE_NAME,
   ListingServiceClient,
 } from '@app/common';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable()
-export class ListingService {
+export class ListingService implements OnModuleInit {
+  private listingClient: ListingServiceClient;
   constructor(
-    @Inject(LISTING_PACKAGE_NAME) private readonly listingClient: ClientGrpc,
+    @Inject(LISTING_PACKAGE_NAME) private readonly client: ClientGrpc,
   ) {}
+  onModuleInit() {
+    this.listingClient =
+      this.client.getService<ListingServiceClient>(LISTING_SERVICE_NAME);
+  }
   async createListing(createListingDto: CreateListingDto) {
-    const source = this.listingClient
-      .getService<ListingServiceClient>(LISTING_SERVICE_NAME)
-      .createListing(createListingDto);
-    const res = await lastValueFrom(source);
+    const $source = this.listingClient.createListing(createListingDto);
+    const res = await lastValueFrom($source);
     return res;
   }
   async getListings() {
-    const source = this.listingClient
-      .getService<ListingServiceClient>(LISTING_SERVICE_NAME)
-      .getListings({});
-    const res = await lastValueFrom(source);
+    const $source = this.listingClient.getListings({});
+    const res = await lastValueFrom($source);
     return res;
   }
   async getListingById(listingId: number) {
-    const listingSource = this.listingClient
-      .getService<ListingServiceClient>(LISTING_SERVICE_NAME)
-      .getListingById({ listingId });
-    const listing = await lastValueFrom(listingSource);
-    return listing
+    const listing$Source = this.listingClient.getListingById({ listingId });
+    const listing = await lastValueFrom(listing$Source);
+    return listing;
   }
 }

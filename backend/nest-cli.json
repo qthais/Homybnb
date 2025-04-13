@@ -73,7 +73,7 @@
       "compilerOptions": {
         "tsConfigPath": "apps/reservation/tsconfig.app.json",
         "assets": [
-          "proto/reservation.proto",
+          "proto/*.proto",
           "prisma/schema.prisma"
         ],
         "watchAssets": true
