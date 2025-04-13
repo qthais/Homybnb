@@ -59,7 +59,7 @@
       "compilerOptions": {
         "tsConfigPath": "apps/listing/tsconfig.app.json",
         "assets": [
-          "proto/listing.proto",
+          "proto/*.proto",
           "prisma/schema.prisma"
         ],
         "watchAssets": true

@@ -21,6 +21,21 @@ export interface ListingIdDto {
   listingId: number;
 }
 
+export interface User {
+  id?: string | undefined;
+  name?: string | undefined;
+  email?: string | undefined;
+  emailVerified?: string | undefined;
+  image?: string | undefined;
+  hashedPassword?: string | undefined;
+  favoriteIds: number[];
+  createdAt?:
+    | string
+    | undefined;
+  /** repeated Account accounts = 10;   // User can have multiple accounts */
+  updatedAt?: string | undefined;
+}
+
 export interface CreateListingDto {
   title: string;
   description: string;
@@ -47,6 +62,7 @@ export interface ListingResponseDto {
   userId: string;
   price: number;
   createdAt?: string | undefined;
+  user?: User | undefined;
 }
 
 export interface GetListingsResponseDto {

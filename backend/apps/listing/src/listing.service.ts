@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/PrismaService';
-import { CreateListingDto, GetListingsResponseDto } from '@app/common';
-import { RpcException } from '@nestjs/microservices';
+import { AUTH_PACKAGE_NAME, CreateListingDto, GetListingsResponseDto, USER_SERVICE_NAME, UserServiceClient } from '@app/common';
+import { ClientGrpc, RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
 import cleanListing from '@app/common/functions/cleanListing';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class ListingService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    @Inject(AUTH_PACKAGE_NAME) private readonly client:ClientGrpc,
+    private readonly prismaService: PrismaService
+  ) {}
   async createListing(createListingDto: CreateListingDto) {
     const {
       title,
@@ -172,8 +176,14 @@ export class ListingService {
           details: 'No listing found',
         });
       }
-
-      return cleanListing(listing);
+      const finalListing= cleanListing(listing);
+      const userService=this.client.getService<UserServiceClient>(USER_SERVICE_NAME)
+      const user$= userService.findOneUser({id:finalListing.userId})
+      const user= await lastValueFrom(user$)
+      return {
+        ...finalListing,
+        user
+      }
     } catch (error) {
       // Handle Prisma errors
       if (error instanceof RpcException) {

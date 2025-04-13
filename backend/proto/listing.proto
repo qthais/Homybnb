@@ -15,6 +15,20 @@ message UserIdDto{
 message ListingIdDto{
   int32 listingId=1;
 }
+
+message User {
+  optional string id = 1;
+  optional string name = 2;
+  optional string email = 3;
+  optional string emailVerified = 4;
+  optional string image = 5;
+  optional string hashedPassword = 6;
+  repeated int32 favoriteIds = 7;
+  optional string createdAt = 8;
+  optional string updatedAt = 9;
+  // repeated Account accounts = 10;   // User can have multiple accounts
+}
+
 message CreateListingDto {
     string title = 1;
     string description = 2;
@@ -41,6 +55,7 @@ message ListingResponseDto {
     string userId = 10;
     int32 price = 11;
     optional string createdAt = 12;
+    optional User user=13;
   }
 
   message GetListingsResponseDto{
