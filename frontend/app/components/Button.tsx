@@ -32,7 +32,7 @@ const Button:React.FC<ButtonProps> = ({
         transition
         w-full
         ${outline? 'bg-white border-black text-black':'bg-rose-500 border-rose-500 text-white'}
-        ${small? 'py- text-sm font-light border-[1px]':'py-3 text-md font-semibold border-2'}
+        ${small? 'py-1 text-sm font-light border-[1px]':'py-3 text-md font-semibold border-2'}
         `}>
             {Icon&&(
                 <Icon

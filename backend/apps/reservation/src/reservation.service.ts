@@ -86,22 +86,25 @@ export class ReservationService {
   }
   async getReservationsByOption(reservationOptionDto: ReservationOptionDto) {
     const { listing, userId, listingId } = reservationOptionDto;
-    if (!userId ) {
+    if (!userId &&!listingId) {
       throw new RpcException({
         code: status.INVALID_ARGUMENT,
-        details: 'UserID is required !',
+        details: 'UserID and listingID required !',
       });
     }
     const authorId=listing?.userId
-    const whereCondition: any = {
-      userId,
-    };
-  
+    const whereCondition: any ={}
+    if(userId){
+      whereCondition.userId=userId
+    }
     if (listingId) {
       whereCondition.listingId = listingId;
     }
     const reservations = await this.prismaService.reservation.findMany({
-      where: whereCondition
+      where: whereCondition,
+      orderBy:{
+        createdAt:'desc'
+      }
     });
     const reservationsWithListing=await Promise.all(
       reservations.map(async(reservation)=>{

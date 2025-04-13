@@ -1,7 +1,7 @@
 import { authenticatedAxios } from "@/utils/authenticatedAxiosServer"
 
 interface IParams{
-    listingId?:string,
+    listingId?:number,
     userId?:string,
     authorId?:string,
 }

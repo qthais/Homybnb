@@ -35,18 +35,13 @@ export class ReservationController {
       reservaion: res,
     });
   }
-  @UseGuards(AuthGuard)
+
   @HttpCode(200)
   @Post('/options')
   async getReservationByOption(
     @Body() reservationOptionDto: ReservationOptionDto,
-    @Req() req: ExtendRequest,
   ) {
-    const userId = req.user.sub.userId;
-    const res = await this.reservationService.getReservationsByOption({
-      ...reservationOptionDto,
-      userId,
-    });
+    const res = await this.reservationService.getReservationsByOption(reservationOptionDto);
     return new ResponseDto(
       HttpStatus.OK,
       'Retrieve reservation successfully!',
