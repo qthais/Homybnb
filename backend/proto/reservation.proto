@@ -4,7 +4,12 @@ service ReservationService{
     rpc CreateReservation(CreateReservationDto) returns (ReservationDto);
     rpc GetReservationById(ReservationIdDto) returns (ReservationDto);
     rpc GetReservationByOption (ReservationOptionDto) returns (ReservationsDto);
-    rpc DeleteReservationByID(reservationIdDto) returns (deleteReservationDto);
+    rpc DeleteReservationByID(ReservationIdDto) returns (DeleteReservationDto);
+    rpc DeleteReservationsByOption(DeleteOptionDto) returns (DeleteReservationDto);
+}
+message DeleteOptionDto{
+    optional int32 reservationId=1;
+    optional string userId=2;
 }
 
 message ReservationOptionDto{
@@ -13,11 +18,11 @@ message ReservationOptionDto{
     optional ListingFilter listing=3;
 }
 
-message deleteReservationDto{
+message DeleteReservationDto{
     string message=1;
 }
 
-message reservationIdDto{
+message ReservationIdDto{
     int32 reservationId=1;
 }
 
@@ -27,9 +32,6 @@ message ListingFilter{
 
 message ReservationsDto{
     repeated ReservationDto reservations=1;
-}
-message ReservationIdDto{
-    int32 reservationId=1;
 }
 message CreateReservationDto{
     string userId = 1;

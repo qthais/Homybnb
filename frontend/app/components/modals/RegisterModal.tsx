@@ -28,6 +28,7 @@ const RegisterModal = () => {
         try {
             setIsLoading(true)
             const res = await axiosClient.post('/api/auth/register', data)
+            LoginModal.onOpen()
             toast.success('Register successfully')
             RegisterModal.onClose()
         } catch (err) {

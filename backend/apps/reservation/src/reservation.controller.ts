@@ -1,13 +1,16 @@
 import { Controller, Get } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
-import { CreateReservationDto, deleteReservationDto, ReservationDto, reservationIdDto, ReservationIdDto, ReservationOptionDto, ReservationsDto, ReservationServiceController, ReservationServiceControllerMethods } from '@app/common';
+import { CreateReservationDto, DeleteOptionDto, DeleteReservationDto, ReservationDto, ReservationIdDto, ReservationOptionDto, ReservationsDto, ReservationServiceController, ReservationServiceControllerMethods } from '@app/common';
 import { Observable } from 'rxjs';
 
 @Controller()
 @ReservationServiceControllerMethods()
 export class ReservationController implements ReservationServiceController {
   constructor(private readonly reservationService: ReservationService) {}
-  async deleteReservationById(reservationIdDto: reservationIdDto): Promise<deleteReservationDto> {
+  async deleteReservationsByOption(deleteReservationByOption: DeleteOptionDto): Promise<DeleteReservationDto>  {
+    return await this.reservationService.deleteReservationsByOption(deleteReservationByOption)
+  }
+  async deleteReservationById(reservationIdDto: ReservationIdDto): Promise<DeleteReservationDto> {
     return await this.reservationService.deleteReservationById(reservationIdDto.reservationId)
   }
   async getReservationById(reservationIdDto: ReservationIdDto): Promise<ReservationDto>  {

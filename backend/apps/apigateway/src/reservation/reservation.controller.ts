@@ -55,9 +55,22 @@ export class ReservationController {
     );
   }
   @UseGuards(AuthGuard)
+  @Delete('/:id/options')
+  async deleteReservationByOption(@Param('id', ParseIntPipe) id: number,@Req() req:ExtendRequest) {
+    const userId=req.user.sub.userId
+    const res = await this.reservationService.deleteReservationByOption({
+      reservationId: id,
+      userId
+    });
+    return new ResponseDto(
+      HttpStatus.OK,
+      res.message,
+    );
+  }
+  @UseGuards(AuthGuard)
   @Delete('/:id')
   async deleteReservationById(@Param('id', ParseIntPipe) id: number) {
-    const res = await this.reservationService.deleteReservationsById({
+    const res = await this.reservationService.deleteReservationById({
       reservationId: id,
     });
     return new ResponseDto(

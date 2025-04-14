@@ -10,17 +10,22 @@ import { Observable } from "rxjs";
 
 export const reservationProtobufPackage = "reservation";
 
+export interface DeleteOptionDto {
+  reservationId?: number | undefined;
+  userId?: string | undefined;
+}
+
 export interface ReservationOptionDto {
   listingId?: number | undefined;
   userId?: string | undefined;
   listing?: ListingFilter | undefined;
 }
 
-export interface deleteReservationDto {
+export interface DeleteReservationDto {
   message: string;
 }
 
-export interface reservationIdDto {
+export interface ReservationIdDto {
   reservationId: number;
 }
 
@@ -30,10 +35,6 @@ export interface ListingFilter {
 
 export interface ReservationsDto {
   reservations: ReservationDto[];
-}
-
-export interface ReservationIdDto {
-  reservationId: number;
 }
 
 export interface CreateReservationDto {
@@ -95,7 +96,9 @@ export interface ReservationServiceClient {
 
   getReservationByOption(request: ReservationOptionDto): Observable<ReservationsDto>;
 
-  deleteReservationById(request: reservationIdDto): Observable<deleteReservationDto>;
+  deleteReservationById(request: ReservationIdDto): Observable<DeleteReservationDto>;
+
+  deleteReservationsByOption(request: DeleteOptionDto): Observable<DeleteReservationDto>;
 }
 
 export interface ReservationServiceController {
@@ -110,8 +113,12 @@ export interface ReservationServiceController {
   ): Promise<ReservationsDto> | Observable<ReservationsDto> | ReservationsDto;
 
   deleteReservationById(
-    request: reservationIdDto,
-  ): Promise<deleteReservationDto> | Observable<deleteReservationDto> | deleteReservationDto;
+    request: ReservationIdDto,
+  ): Promise<DeleteReservationDto> | Observable<DeleteReservationDto> | DeleteReservationDto;
+
+  deleteReservationsByOption(
+    request: DeleteOptionDto,
+  ): Promise<DeleteReservationDto> | Observable<DeleteReservationDto> | DeleteReservationDto;
 }
 
 export function ReservationServiceControllerMethods() {
@@ -121,6 +128,7 @@ export function ReservationServiceControllerMethods() {
       "getReservationById",
       "getReservationByOption",
       "deleteReservationById",
+      "deleteReservationsByOption",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

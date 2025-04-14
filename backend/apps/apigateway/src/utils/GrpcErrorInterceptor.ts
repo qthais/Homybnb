@@ -30,6 +30,10 @@ export class GrpcErrorInterceptor implements NestInterceptor {
               httpStatus = HttpStatus.UNAUTHORIZED;
               message = 'Unauthorized!';
               break;
+            case status.PERMISSION_DENIED:
+              httpStatus=HttpStatus.FORBIDDEN;
+              message="Permission Denied!"
+              break;
           }
           message = error.details || message;
         }

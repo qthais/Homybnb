@@ -16,8 +16,8 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
     const registerModal = useRegisterModal()
     const loginModal = useLoginModal()
     const [isOpen, setIsOpen] = useState(false)
-    const rentModal=useRentModal()
-    const router= useRouter()
+    const rentModal = useRentModal()
+    const router = useRouter()
     const toggleOpen = useCallback(() => {
         setIsOpen(value => !value)
     }, [])
@@ -26,8 +26,8 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
             loginModal.onOpen()
         }
         rentModal.onOpen()
-        
-    }, [currentUser, loginModal,rentModal])
+
+    }, [currentUser, loginModal, rentModal])
     return (
         <div className='relative'>
             <div className="flex flex-row items-center gap-3">
@@ -79,10 +79,10 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                                     router.push('/trips')
                                 }} label='My trips' />
                                 <MenuItem onClick={() => {
-
+                                    router.push('/favorites')
                                 }} label='My favorites' />
                                 <MenuItem onClick={() => {
-
+                                    router.push('/reservations')
                                 }} label='My reservations' />
                                 <MenuItem onClick={() => {
 

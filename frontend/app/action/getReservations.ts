@@ -24,7 +24,7 @@ export default async function getReservations(params:IParams){
             url:'/api/reservations/options',
             data:query
         })
-        const reservations=res.data.data.reservations
+        const reservations=res.data.data.reservations||[]
         return reservations
     }catch(err){
         throw err.response.data

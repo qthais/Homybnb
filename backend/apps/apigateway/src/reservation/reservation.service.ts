@@ -1,5 +1,6 @@
 import {
   CreateReservationDto,
+  DeleteOptionDto,
   RESERVATION_PACKAGE_NAME,
   RESERVATION_SERVICE_NAME,
   ReservationIdDto,
@@ -33,8 +34,13 @@ export class ReservationService implements OnModuleInit {
     const reservations= await lastValueFrom($source)
     return reservations
   }
-  async deleteReservationsById(reservationIdDto:ReservationIdDto){
+  async deleteReservationById(reservationIdDto:ReservationIdDto){
     const $source= this.reservationClient.deleteReservationById(reservationIdDto)
+    const message= await lastValueFrom($source)
+    return message
+  }
+  async deleteReservationByOption(deleteOptionDto:DeleteOptionDto){
+    const $source= this.reservationClient.deleteReservationsByOption(deleteOptionDto)
     const message= await lastValueFrom($source)
     return message
   }
