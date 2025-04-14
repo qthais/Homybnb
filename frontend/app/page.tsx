@@ -9,7 +9,7 @@ export default async function Home() {
   let listings
   try {
     const res = await authenticatedAxios({
-      url: '/api/listing',
+      url: '/api/listings',
       method: "GET"
     })
     listings = res.data.data.listings

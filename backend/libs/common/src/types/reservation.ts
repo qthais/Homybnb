@@ -16,6 +16,14 @@ export interface ReservationOptionDto {
   listing?: ListingFilter | undefined;
 }
 
+export interface deleteReservationDto {
+  message: string;
+}
+
+export interface reservationIdDto {
+  reservationId: number;
+}
+
 export interface ListingFilter {
   userId?: string | undefined;
 }
@@ -86,6 +94,8 @@ export interface ReservationServiceClient {
   getReservationById(request: ReservationIdDto): Observable<ReservationDto>;
 
   getReservationByOption(request: ReservationOptionDto): Observable<ReservationsDto>;
+
+  deleteReservationById(request: reservationIdDto): Observable<deleteReservationDto>;
 }
 
 export interface ReservationServiceController {
@@ -98,11 +108,20 @@ export interface ReservationServiceController {
   getReservationByOption(
     request: ReservationOptionDto,
   ): Promise<ReservationsDto> | Observable<ReservationsDto> | ReservationsDto;
+
+  deleteReservationById(
+    request: reservationIdDto,
+  ): Promise<deleteReservationDto> | Observable<deleteReservationDto> | deleteReservationDto;
 }
 
 export function ReservationServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createReservation", "getReservationById", "getReservationByOption"];
+    const grpcMethods: string[] = [
+      "createReservation",
+      "getReservationById",
+      "getReservationByOption",
+      "deleteReservationById",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("ReservationService", method)(constructor.prototype[method], method, descriptor);

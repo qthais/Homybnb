@@ -10,7 +10,7 @@ interface IParams {
 }
 const ListingPage = async ({ params }: { params: IParams }) => {
   const {listingId}= await params
-  const res = await axiosClient.get(`/api/listing/${listingId}`)
+  const res = await axiosClient.get(`/api/listings/${listingId}`)
   const listing = res.data.data.listing
   const currentUser=await getCurrentUser()
   const reservations= await getReservations(params)

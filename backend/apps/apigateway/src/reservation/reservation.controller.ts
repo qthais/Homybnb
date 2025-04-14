@@ -1,9 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
+  Param,
+  ParseIntPipe,
   Post,
   Req,
   UseGuards,
@@ -17,11 +20,11 @@ import {
 } from '@app/common';
 import { ResponseDto } from '../utils/types/HttpResponse';
 
-@Controller('reservation')
+@Controller('reservations')
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
   @UseGuards(AuthGuard)
-  @Post('/create')
+  @Post()
   async createReservation(
     @Body() createReservaionDto: CreateReservationDto,
     @Req() req: ExtendRequest,
@@ -41,11 +44,25 @@ export class ReservationController {
   async getReservationByOption(
     @Body() reservationOptionDto: ReservationOptionDto,
   ) {
-    const res = await this.reservationService.getReservationsByOption(reservationOptionDto);
+    const res =
+      await this.reservationService.getReservationsByOption(
+        reservationOptionDto,
+      );
     return new ResponseDto(
       HttpStatus.OK,
       'Retrieve reservation successfully!',
       res,
+    );
+  }
+  @UseGuards(AuthGuard)
+  @Delete('/:id')
+  async deleteReservationById(@Param('id', ParseIntPipe) id: number) {
+    const res = await this.reservationService.deleteReservationsById({
+      reservationId: id,
+    });
+    return new ResponseDto(
+      HttpStatus.OK,
+      res.message,
     );
   }
 }

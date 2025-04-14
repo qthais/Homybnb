@@ -21,7 +21,7 @@ export default async function getReservations(params:IParams){
         }
         const res= await authenticatedAxios({
             method:'POST',
-            url:'/api/reservation/options',
+            url:'/api/reservations/options',
             data:query
         })
         const reservations=res.data.data.reservations

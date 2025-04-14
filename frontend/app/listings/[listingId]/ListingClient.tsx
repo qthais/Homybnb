@@ -56,7 +56,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
         setIsLoading(true)
         try {
 
-            await axios.post('/api/reservation/create', {
+            await axios.post('/api/reservations', {
                 totalPrice,
                 startDate: dateRange.startDate,
                 endDate: dateRange.endDate,

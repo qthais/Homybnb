@@ -4,12 +4,12 @@ import { AuthGuard } from '../guards/jwt.guard';
 import { ResponseDto } from '../utils/types/HttpResponse';
 import { CreateListingDto, ExtendRequest } from '@app/common';
 
-@Controller('listing')
+@Controller('listings')
 export class ListingController {
   constructor(private readonly listingService: ListingService) {
   }
   @UseGuards(AuthGuard)
-  @Post('/create')
+  @Post()
   async createListing(@Body() createListingDto:CreateListingDto, @Request() req:ExtendRequest){
     const id=req.user.sub.userId
     const res=await this.listingService.createListing({...createListingDto,userId:id})

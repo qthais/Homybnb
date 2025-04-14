@@ -84,6 +84,37 @@ export class ReservationService {
       });
     }
   }
+  async deleteReservationById(reservationId:number){
+    try{
+      if(!reservationId){
+        throw new RpcException({
+          code:status.INVALID_ARGUMENT,
+          details:"No Reservation ID provided"
+        })
+      }
+      await this.prismaService.reservation.delete({
+        where:{
+          id:reservationId
+        }
+      })
+      return {message:"Cancel successfully"}
+    }catch(error){
+      console.log(error)
+      if (error instanceof RpcException) {
+        throw error;
+      }
+      if(error.code==='P2025'){
+        throw new RpcException({
+          code:status.NOT_FOUND,
+          details:"No reservation found to delete"
+        })
+      }
+      throw new RpcException({
+        code: status.INTERNAL,
+        details: 'Failed to create reservation',
+      });
+    }
+  }
   async getReservationsByOption(reservationOptionDto: ReservationOptionDto) {
     const { listing, userId, listingId } = reservationOptionDto;
     if (!userId &&!listingId) {

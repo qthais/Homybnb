@@ -2,6 +2,7 @@ import {
   CreateReservationDto,
   RESERVATION_PACKAGE_NAME,
   RESERVATION_SERVICE_NAME,
+  ReservationIdDto,
   ReservationOptionDto,
   ReservationServiceClient,
 } from '@app/common';
@@ -31,5 +32,10 @@ export class ReservationService implements OnModuleInit {
     const $source= this.reservationClient.getReservationByOption(reservationOptionDto)
     const reservations= await lastValueFrom($source)
     return reservations
+  }
+  async deleteReservationsById(reservationIdDto:ReservationIdDto){
+    const $source= this.reservationClient.deleteReservationById(reservationIdDto)
+    const message= await lastValueFrom($source)
+    return message
   }
 }
