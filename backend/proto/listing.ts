@@ -19,6 +19,12 @@ export interface UserIdDto {
 
 export interface ListingIdDto {
   listingId: number;
+  include?: Include | undefined;
+}
+
+export interface Include {
+  listing?: boolean | undefined;
+  reservations?: boolean | undefined;
 }
 
 export interface User {
@@ -65,8 +71,21 @@ export interface ListingResponseDto {
   user?: User | undefined;
 }
 
+export interface GetFavoritesDto {
+  listingIds: number[];
+}
+
 export interface GetListingsResponseDto {
   listings: ListingResponseDto[];
+}
+
+export interface DeleteListingDto {
+  listingId: number;
+  userId: string;
+}
+
+export interface DeleteResponseDto {
+  message: string;
 }
 
 export const LISTING_PACKAGE_NAME = "listing";
@@ -79,6 +98,10 @@ export interface ListingServiceClient {
   getListingsOfUser(request: UserIdDto): Observable<GetListingsResponseDto>;
 
   getListingById(request: ListingIdDto): Observable<ListingResponseDto>;
+
+  getFavorites(request: GetFavoritesDto): Observable<GetListingsResponseDto>;
+
+  deleteListing(request: DeleteListingDto): Observable<DeleteResponseDto>;
 }
 
 export interface ListingServiceController {
@@ -97,11 +120,26 @@ export interface ListingServiceController {
   getListingById(
     request: ListingIdDto,
   ): Promise<ListingResponseDto> | Observable<ListingResponseDto> | ListingResponseDto;
+
+  getFavorites(
+    request: GetFavoritesDto,
+  ): Promise<GetListingsResponseDto> | Observable<GetListingsResponseDto> | GetListingsResponseDto;
+
+  deleteListing(
+    request: DeleteListingDto,
+  ): Promise<DeleteResponseDto> | Observable<DeleteResponseDto> | DeleteResponseDto;
 }
 
 export function ListingServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createListing", "getListings", "getListingsOfUser", "getListingById"];
+    const grpcMethods: string[] = [
+      "createListing",
+      "getListings",
+      "getListingsOfUser",
+      "getListingById",
+      "getFavorites",
+      "deleteListing",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("ListingService", method)(constructor.prototype[method], method, descriptor);

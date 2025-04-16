@@ -1,30 +1,94 @@
-import { Body, Controller, Get, HttpStatus, Param, ParseIntPipe, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { ListingService } from './listing.service';
 import { AuthGuard } from '../guards/jwt.guard';
 import { ResponseDto } from '../utils/types/HttpResponse';
-import { CreateListingDto, ExtendRequest } from '@app/common';
+import { CreateListingDto, ExtendRequest, GetFavoritesDto } from '@app/common';
 
 @Controller('listings')
 export class ListingController {
-  constructor(private readonly listingService: ListingService) {
-  }
+  constructor(private readonly listingService: ListingService) {}
   @UseGuards(AuthGuard)
   @Post()
-  async createListing(@Body() createListingDto:CreateListingDto, @Request() req:ExtendRequest){
-    const id=req.user.sub.userId
-    const res=await this.listingService.createListing({...createListingDto,userId:id})
-    return new ResponseDto(HttpStatus.OK,"Creating listing successfully",{listing:res})
+  async createListing(
+    @Body() createListingDto: CreateListingDto,
+    @Request() req: ExtendRequest,
+  ) {
+    const id = req.user.sub.userId;
+    const res = await this.listingService.createListing({
+      ...createListingDto,
+      userId: id,
+    });
+    return new ResponseDto(HttpStatus.OK, 'Creating listing successfully', {
+      listing: res,
+    });
   }
 
   @Get()
-  async getListings(){
-    const res= await this.listingService.getListings()
-    return new ResponseDto(HttpStatus.OK,"Retrieving listings successfully",res)
+  async getListings() {
+    const res = await this.listingService.getListings();
+    return new ResponseDto(
+      HttpStatus.OK,
+      'Retrieving listings successfully',
+      res,
+    );
+  }
+
+  @Get("/mine")
+  @UseGuards(AuthGuard)
+  async getListingsOfUser(@Request() req:ExtendRequest) {
+    const userId=req.user.sub.userId
+    const res = await this.listingService.getListingOfUser({userId});
+    return new ResponseDto(
+      HttpStatus.OK,
+      'Retrieving listings successfully',
+      res,
+    );
   }
 
   @Get('/:id')
-  async getListingById(@Param('id',ParseIntPipe) id:number){
-    const res= await this.listingService.getListingById(id)
-    return new ResponseDto(HttpStatus.OK,"Retrieving listing successfully",{listing:res})
+  async getListingById(@Param('id', ParseIntPipe) id: number) {
+    const res = await this.listingService.getListingById({
+      listingId: id,
+      include: { listing: true },
+    });
+    return new ResponseDto(HttpStatus.OK, 'Retrieving listing successfully', {
+      listing: res,
+    });
+  }
+  @Post('/favorites')
+  @UseGuards(AuthGuard)
+  async getFavorites(@Body() getFavoritesDto:GetFavoritesDto) {
+    const res = await this.listingService.getFavorites(getFavoritesDto);
+    return new ResponseDto(
+      HttpStatus.OK,
+      'Retrieving listings successfully',
+      res,
+    );
+  }
+
+  @Delete("/:id")
+  @UseGuards(AuthGuard)
+  async deleteListing(@Param('id',ParseIntPipe) id:number, @Request() req:ExtendRequest){
+    const userId=req.user.sub.userId
+    const res= await this.listingService.deleteListing({
+      userId,
+      listingId:id
+    })
+    return new ResponseDto(
+      HttpStatus.OK,
+      'Listing deleted!',
+      res,
+    );
   }
 }

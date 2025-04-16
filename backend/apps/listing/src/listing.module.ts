@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ListingController } from './listing.controller';
 import { ListingService } from './listing.service';
 import { PrismaService } from '../prisma/PrismaService';
-import { AUTH_PACKAGE_NAME } from '@app/common';
+import { AUTH_PACKAGE_NAME, RESERVATION_PACKAGE_NAME } from '@app/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 
@@ -18,6 +18,15 @@ import { join } from 'path';
             url: '0.0.0.0:50051',
           },
         },
+        {
+          name:RESERVATION_PACKAGE_NAME,
+          transport:Transport.GRPC,
+          options:{
+            package:RESERVATION_PACKAGE_NAME,
+            protoPath:join(__dirname, '../reservation.proto'),
+            url: '0.0.0.0:50053',
+          }
+        }
       ]),
     ],
   controllers: [ListingController],

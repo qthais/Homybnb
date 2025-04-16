@@ -4,18 +4,12 @@ import Container from "./components/Container"
 import EmptyState from "./components/EmptyState";
 import ListingCard from "./components/listings/ListingCard";
 import getCurrentUser from "./action/getCurrentUser";
-
-export default async function Home() {
-  let listings
-  try {
-    const res = await authenticatedAxios({
-      url: '/api/listings',
-      method: "GET"
-    })
-    listings = res.data.data.listings
-  } catch (err) {
-    listings = []
-  }
+import getListing, { IListingParams } from "./action/getListing";
+interface HomeProps{
+  searchParams:IListingParams
+}
+const Home=async({searchParams}:HomeProps)=> {
+  const listings= await getListing(searchParams)
   const currentUser = await getCurrentUser()
 
   if (listings.length == 0) {
@@ -53,3 +47,4 @@ export default async function Home() {
     </ClientOnly>
   )
 }
+export default Home

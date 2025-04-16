@@ -1,6 +1,18 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../prisma/PrismaService';
-import { AUTH_PACKAGE_NAME, CreateListingDto, GetListingsResponseDto, USER_SERVICE_NAME, UserServiceClient } from '@app/common';
+import {
+  AUTH_PACKAGE_NAME,
+  CreateListingDto,
+  DeleteListingDto,
+  GetFavoritesDto,
+  GetListingsResponseDto,
+  ListingIdDto,
+  RESERVATION_PACKAGE_NAME,
+  RESERVATION_SERVICE_NAME,
+  ReservationServiceClient,
+  USER_SERVICE_NAME,
+  UserServiceClient,
+} from '@app/common';
 import { ClientGrpc, RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
 import cleanListing from '@app/common/functions/cleanListing';
@@ -8,13 +20,21 @@ import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class ListingService implements OnModuleInit {
-  private userService:UserServiceClient;
+  private userService: UserServiceClient;
+  private reservationService: ReservationServiceClient;
   constructor(
-    @Inject(AUTH_PACKAGE_NAME) private readonly client:ClientGrpc,
-    private readonly prismaService: PrismaService
+    @Inject(AUTH_PACKAGE_NAME) private readonly userClient: ClientGrpc,
+    @Inject(RESERVATION_PACKAGE_NAME)
+    private readonly reservationClient: ClientGrpc,
+    private readonly prismaService: PrismaService,
   ) {}
-  onModuleInit(){
-    this.userService=this.client.getService<UserServiceClient>(USER_SERVICE_NAME)
+  onModuleInit() {
+    this.userService =
+      this.userClient.getService<UserServiceClient>(USER_SERVICE_NAME);
+    this.reservationService =
+      this.reservationClient.getService<ReservationServiceClient>(
+        RESERVATION_SERVICE_NAME,
+      );
   }
   async createListing(createListingDto: CreateListingDto) {
     const {
@@ -93,7 +113,7 @@ export class ListingService implements OnModuleInit {
     if (price <= 0 || isNaN(price)) {
       throw new RpcException({
         code: status.INVALID_ARGUMENT,
-        details: "Price must be a positive number",
+        details: 'Price must be a positive number',
       });
     }
     // Validate userId
@@ -130,17 +150,17 @@ export class ListingService implements OnModuleInit {
         price,
       },
     });
-    return cleanListing(newListing)
+    return cleanListing(newListing);
   }
-  async getLisingsOfUser(userId:string){
+  async getLisingsOfUser(userId: string) {
     try {
       const listings = await this.prismaService.listing.findMany({
         where: {
-          userId: userId
+          userId: userId,
         },
         orderBy: {
-          createdAt: 'desc'
-        }
+          createdAt: 'desc',
+        },
       });
 
       // Check if listings were found
@@ -151,13 +171,13 @@ export class ListingService implements OnModuleInit {
         });
       }
 
-      return listings.map(listing => cleanListing(listing));
+      return listings.map((listing) => cleanListing(listing));
     } catch (error) {
       // Handle Prisma errors
       if (error instanceof RpcException) {
         throw error;
       }
-      
+
       throw new RpcException({
         code: status.INTERNAL,
         details: 'Failed to retrieve listings',
@@ -165,34 +185,40 @@ export class ListingService implements OnModuleInit {
     }
   }
 
-  async getLisingById(listingId:number){
+  async getLisingById(listingIdDto: ListingIdDto) {
+    const listingId = listingIdDto.listingId;
+    const includeListing = listingIdDto.include?.listing || false;
+    // const includeListing=
     try {
       const listing = await this.prismaService.listing.findUnique({
         where: {
-          id:listingId
+          id: listingId,
         },
       });
 
       // Check if listing were found
-      if (!listing ) {
+      if (!listing) {
         throw new RpcException({
           code: status.NOT_FOUND,
           details: 'No listing found',
         });
       }
-      const finalListing= cleanListing(listing);
-      const user$= this.userService.findOneUser({id:finalListing.userId})
-      const user= await lastValueFrom(user$)
+      const finalListing = cleanListing(listing);
+      if (!includeListing) {
+        return finalListing;
+      }
+      const user$ = this.userService.findOneUser({ id: finalListing.userId });
+      const user = await lastValueFrom(user$);
       return {
         ...finalListing,
-        user
-      }
+        user,
+      };
     } catch (error) {
       // Handle Prisma errors
       if (error instanceof RpcException) {
         throw error;
       }
-      
+
       throw new RpcException({
         code: status.INTERNAL,
         details: 'Failed to retrieve listings',
@@ -200,13 +226,12 @@ export class ListingService implements OnModuleInit {
     }
   }
 
-  
-  async getListings(){
+  async getListings() {
     try {
       const listings = await this.prismaService.listing.findMany({
         orderBy: {
-          createdAt: 'desc'
-        }
+          createdAt: 'desc',
+        },
       });
 
       // Check if listings were found
@@ -217,13 +242,71 @@ export class ListingService implements OnModuleInit {
         });
       }
 
-      return listings.map(listing => cleanListing(listing));
+      return listings.map((listing) => cleanListing(listing));
     } catch (error) {
       // Handle Prisma errors
       if (error instanceof RpcException) {
         throw error;
       }
-      
+
+      throw new RpcException({
+        code: status.INTERNAL,
+        details: 'Failed to retrieve listings',
+      });
+    }
+  }
+  async getFavotires(getFavorites: GetFavoritesDto) {
+    const favoriteIds = getFavorites.listingIds ?? [];
+    const listings = await this.prismaService.listing.findMany({
+      where: {
+        id: {
+          in: favoriteIds,
+        },
+      },
+    });
+    return listings.map((listing) => cleanListing(listing));
+  }
+  async deleteListing(deleteListingDto: DeleteListingDto) {
+    try {
+      const { listingId, userId } = deleteListingDto;
+      if (!listingId || !userId) {
+        throw new RpcException({
+          code: status.INVALID_ARGUMENT,
+          details: 'Listing ID and User ID are required',
+        });
+      }
+      const $reservationsSource =
+        this.reservationService.getReservationByOption({
+          listingId,
+        });
+      const reservations = (await lastValueFrom($reservationsSource))
+        .reservations;
+      const deletingReservations = reservations.filter(
+        (reservation) => reservation.listing?.userId == userId,
+      );
+      if (deletingReservations.length != 0) {
+        await Promise.all(
+          deletingReservations.map(async (reservation) => {
+            return await lastValueFrom(
+              this.reservationService.deleteReservationById({
+                reservationId: reservation.id,
+              }),
+            );
+          }),
+        );
+      }
+      await this.prismaService.listing.delete({
+        where: {
+          id: listingId,
+        },
+      });
+      return { message: 'Listing deleted!' };
+    } catch (error) {
+      // Handle Prisma errors
+      if (error instanceof RpcException) {
+        throw error;
+      }
+
       throw new RpcException({
         code: status.INTERNAL,
         details: 'Failed to retrieve listings',

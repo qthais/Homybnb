@@ -6,6 +6,8 @@ service ListingService{
     rpc GetListings(Empty) returns (GetListingsResponseDto);
     rpc GetListingsOfUser(UserIdDto) returns (GetListingsResponseDto);
     rpc GetListingById(ListingIdDto) returns (ListingResponseDto);
+    rpc GetFavorites(GetFavoritesDto) returns (GetListingsResponseDto);
+    rpc DeleteListing(DeleteListingDto) returns (DeleteResponseDto);
 }
 
 message Empty {}
@@ -14,6 +16,12 @@ message UserIdDto{
 }
 message ListingIdDto{
   int32 listingId=1;
+  optional Include include=2;
+}
+
+message Include{
+  optional bool listing=1;
+  optional bool reservations=2;
 }
 
 message User {
@@ -56,10 +64,22 @@ message ListingResponseDto {
     int32 price = 11;
     optional string createdAt = 12;
     optional User user=13;
-  }
+}
 
-  message GetListingsResponseDto{
+message GetFavoritesDto{
+    repeated int32 listingIds=1;
+}
+
+message GetListingsResponseDto{
     repeated ListingResponseDto listings = 1;
-  }
+}
+
+message DeleteListingDto{
+  int32 listingId=1;
+  string userId=2;
+}
+message DeleteResponseDto{
+  string message=1;
+}
 //   protoc --plugin=protoc-gen-ts_proto=.\node_modules\.bin\protoc-gen-ts_proto.cmd --ts_proto_out=.\ --ts_proto_opt=nestJs=true .\proto\listing.proto
 
