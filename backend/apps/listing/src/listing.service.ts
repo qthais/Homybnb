@@ -302,6 +302,7 @@ export class ListingService implements OnModuleInit {
       });
       return { message: 'Listing deleted!' };
     } catch (error) {
+      console.log(error)
       // Handle Prisma errors
       if (error instanceof RpcException) {
         throw error;
@@ -309,7 +310,7 @@ export class ListingService implements OnModuleInit {
 
       throw new RpcException({
         code: status.INTERNAL,
-        details: 'Failed to retrieve listings',
+        details: 'Failed to delete listing',
       });
     }
   }

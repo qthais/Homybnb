@@ -201,7 +201,7 @@ export class ReservationService {
             }
           })
         ) 
-        return reservationsWithListing
+        return reservationsWithListing.filter((reservation)=>reservation.listing.userId==authorId)
       }
       if(userId){
         whereCondition.userId=userId

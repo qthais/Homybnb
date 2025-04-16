@@ -18,7 +18,7 @@ import {
 export class ListingController implements ListingServiceController {
   constructor(private readonly listingService: ListingService) {}
   async deleteListing(deleteListingDto: DeleteListingDto): Promise<DeleteResponseDto>  {
-    return await this.deleteListing(deleteListingDto)
+    return await this.listingService.deleteListing(deleteListingDto)
   }
   async getFavorites(getFavoritesDto: GetFavoritesDto): Promise<GetListingsResponseDto> {
     const listing = await this.listingService.getFavotires(getFavoritesDto);
