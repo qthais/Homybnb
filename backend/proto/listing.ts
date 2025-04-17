@@ -13,6 +13,16 @@ export const protobufPackage = "listing";
 export interface Empty {
 }
 
+export interface GetListingsByOptionDto {
+  roomCount?: number | undefined;
+  guestCount?: number | undefined;
+  bathroomCount?: number | undefined;
+  startDate?: string | undefined;
+  endDate?: string | undefined;
+  locationValue?: string | undefined;
+  category?: string | undefined;
+}
+
 export interface UserIdDto {
   userId: string;
 }
@@ -69,6 +79,18 @@ export interface ListingResponseDto {
   price: number;
   createdAt?: string | undefined;
   user?: User | undefined;
+  reservations: ReservationDto[];
+}
+
+export interface ReservationDto {
+  id: number;
+  userId: string;
+  listingId: number;
+  startDate: string;
+  endDate: string;
+  totalPrice: number;
+  createdAt: string;
+  listing?: ListingResponseDto | undefined;
 }
 
 export interface GetFavoritesDto {
@@ -102,6 +124,8 @@ export interface ListingServiceClient {
   getFavorites(request: GetFavoritesDto): Observable<GetListingsResponseDto>;
 
   deleteListing(request: DeleteListingDto): Observable<DeleteResponseDto>;
+
+  getListingsByOption(request: GetListingsByOptionDto): Observable<GetListingsResponseDto>;
 }
 
 export interface ListingServiceController {
@@ -128,6 +152,10 @@ export interface ListingServiceController {
   deleteListing(
     request: DeleteListingDto,
   ): Promise<DeleteResponseDto> | Observable<DeleteResponseDto> | DeleteResponseDto;
+
+  getListingsByOption(
+    request: GetListingsByOptionDto,
+  ): Promise<GetListingsResponseDto> | Observable<GetListingsResponseDto> | GetListingsResponseDto;
 }
 
 export function ListingServiceControllerMethods() {
@@ -139,6 +167,7 @@ export function ListingServiceControllerMethods() {
       "getListingById",
       "getFavorites",
       "deleteListing",
+      "getListingsByOption",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

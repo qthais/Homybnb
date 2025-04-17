@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   HttpStatus,
   Param,
   ParseIntPipe,
@@ -13,7 +14,7 @@ import {
 import { ListingService } from './listing.service';
 import { AuthGuard } from '../guards/jwt.guard';
 import { ResponseDto } from '../utils/types/HttpResponse';
-import { CreateListingDto, ExtendRequest, GetFavoritesDto } from '@app/common';
+import { CreateListingDto, ExtendRequest, GetFavoritesDto, GetListingsByOptionDto } from '@app/common';
 
 @Controller('listings')
 export class ListingController {
@@ -49,6 +50,17 @@ export class ListingController {
   async getListingsOfUser(@Request() req:ExtendRequest) {
     const userId=req.user.sub.userId
     const res = await this.listingService.getListingOfUser({userId});
+    return new ResponseDto(
+      HttpStatus.OK,
+      'Retrieving listings successfully',
+      res,
+    );
+  }
+
+  @Post("/options")
+  @HttpCode(200)
+  async getListingsByOption(@Body() getListingByOPtionDto:GetListingsByOptionDto) {
+    const res = await this.listingService.getListingsByOption(getListingByOPtionDto);
     return new ResponseDto(
       HttpStatus.OK,
       'Retrieving listings successfully',

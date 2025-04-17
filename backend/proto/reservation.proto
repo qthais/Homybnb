@@ -7,6 +7,10 @@ service ReservationService{
     rpc DeleteReservationByID(ReservationIdDto) returns (DeleteReservationDto);
     rpc DeleteReservationsByOption(DeleteOptionDto) returns (DeleteReservationDto);
 }
+
+message IncludeListing{
+    optional bool listing=1;
+}
 message DeleteOptionDto{
     optional int32 reservationId=1;
     optional string userId=2;
@@ -16,6 +20,7 @@ message ReservationOptionDto{
     optional int32 listingId=1;
     optional string userId=2;
     optional ListingFilter listing=3;
+    optional IncludeListing include=4;
 }
 
 message DeleteReservationDto{

@@ -9,6 +9,7 @@ import LoginModal from './components/modals/LoginModal'
 import getCurrentUser from './action/getCurrentUser'
 import RentModal from './components/modals/RentModal'
 import SessionProviderWrapper from './components/SessionProviderWrapper'
+import SearchModal from './components/modals/SearchModal'
 
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default async function RootLayout({
             <RentModal />
             <RegisterModal />
             <LoginModal />
+            <SearchModal/>
             <Navbar currentUser={currentUser} />
             <ToasterProvider />
           </ClientOnly>

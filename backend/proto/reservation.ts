@@ -10,6 +10,10 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "reservation";
 
+export interface IncludeListing {
+  listing?: boolean | undefined;
+}
+
 export interface DeleteOptionDto {
   reservationId?: number | undefined;
   userId?: string | undefined;
@@ -19,6 +23,7 @@ export interface ReservationOptionDto {
   listingId?: number | undefined;
   userId?: string | undefined;
   listing?: ListingFilter | undefined;
+  include?: IncludeListing | undefined;
 }
 
 export interface DeleteReservationDto {

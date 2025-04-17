@@ -2,6 +2,7 @@ import {
   CreateListingDto,
   DeleteListingDto,
   GetFavoritesDto,
+  GetListingsByOptionDto,
   LISTING_PACKAGE_NAME,
   LISTING_SERVICE_NAME,
   ListingIdDto,
@@ -51,5 +52,10 @@ export class ListingService implements OnModuleInit {
     const $source = this.listingClient.deleteListing(deleteListingDto);
     const res = await lastValueFrom($source);
     return res
+  }
+  async getListingsByOption(getListingsByOptionDto:GetListingsByOptionDto){
+    const $source= this.listingClient.getListingsByOption(getListingsByOptionDto)
+    const listings = await lastValueFrom($source)
+    return listings
   }
 }

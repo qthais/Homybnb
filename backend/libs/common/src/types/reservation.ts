@@ -7,8 +7,14 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
+import { User } from "./auth";
+import { ListingResponseDto } from "./listing";
 
 export const reservationProtobufPackage = "reservation";
+
+export interface IncludeListing {
+  listing?: boolean | undefined;
+}
 
 export interface DeleteOptionDto {
   reservationId?: number | undefined;
@@ -19,6 +25,7 @@ export interface ReservationOptionDto {
   listingId?: number | undefined;
   userId?: string | undefined;
   listing?: ListingFilter | undefined;
+  include?: IncludeListing | undefined;
 }
 
 export interface DeleteReservationDto {
@@ -56,36 +63,8 @@ export interface ReservationDto {
   listing?: ListingResponseDto | undefined;
 }
 
-interface ListingResponseDto {
-  id: number;
-  title: string;
-  description: string;
-  imageSrc: string;
-  category: string;
-  roomCount: number;
-  bathroomCount: number;
-  guestCount: number;
-  locationValue: string;
-  userId: string;
-  price: number;
-  createdAt?: string | undefined;
-  user?: User | undefined;
-}
 
-interface User {
-  id?: string | undefined;
-  name?: string | undefined;
-  email?: string | undefined;
-  emailVerified?: string | undefined;
-  image?: string | undefined;
-  hashedPassword?: string | undefined;
-  favoriteIds: number[];
-  createdAt?:
-    | string
-    | undefined;
-  /** repeated Account accounts = 10;   // User can have multiple accounts */
-  updatedAt?: string | undefined;
-}
+
 
 export const RESERVATION_PACKAGE_NAME = "reservation";
 

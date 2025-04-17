@@ -8,9 +8,19 @@ service ListingService{
     rpc GetListingById(ListingIdDto) returns (ListingResponseDto);
     rpc GetFavorites(GetFavoritesDto) returns (GetListingsResponseDto);
     rpc DeleteListing(DeleteListingDto) returns (DeleteResponseDto);
+    rpc GetListingsByOption(GetListingsByOptionDto) returns (GetListingsResponseDto);
 }
 
-message Empty {}
+message Empty{}
+message GetListingsByOptionDto{
+  optional int32 roomCount=1;
+  optional int32 guestCount=2;
+  optional int32 bathroomCount=3;
+  optional string startDate=4;
+  optional string endDate=5;
+  optional string locationValue=6;
+  optional string category=7;
+}
 message UserIdDto{
     string userId=1;
 }
@@ -64,8 +74,19 @@ message ListingResponseDto {
     int32 price = 11;
     optional string createdAt = 12;
     optional User user=13;
+    repeated ReservationDto reservations=14;
 }
 
+message ReservationDto{
+  int32 id = 1;
+  string userId = 2;
+  int32 listingId = 3;
+  string startDate = 4;
+  string endDate = 5;
+  int32 totalPrice = 6;
+  string createdAt = 7;
+  optional ListingResponseDto listing =8;
+}
 message GetFavoritesDto{
     repeated int32 listingIds=1;
 }

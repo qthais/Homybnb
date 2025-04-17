@@ -7,10 +7,22 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
+import { User } from "./auth";
+import { ReservationDto } from "./reservation";
 
 export const listingProtobufPackage = "listing";
 
 interface Empty {
+}
+
+export interface GetListingsByOptionDto {
+  roomCount?: number | undefined;
+  guestCount?: number | undefined;
+  bathroomCount?: number | undefined;
+  startDate?: string | undefined;
+  endDate?: string | undefined;
+  locationValue?: string | undefined;
+  category?: string | undefined;
 }
 
 export interface UserIdDto {
@@ -26,20 +38,7 @@ export interface Include {
   listing?: boolean | undefined;
   reservations?: boolean | undefined;
 }
-interface User {
-  id?: string | undefined;
-  name?: string | undefined;
-  email?: string | undefined;
-  emailVerified?: string | undefined;
-  image?: string | undefined;
-  hashedPassword?: string | undefined;
-  favoriteIds: number[];
-  createdAt?:
-    | string
-    | undefined;
-  /** repeated Account accounts = 10;   // User can have multiple accounts */
-  updatedAt?: string | undefined;
-}
+
 
 export interface CreateListingDto {
   title: string;
@@ -68,7 +67,9 @@ export interface ListingResponseDto {
   price: number;
   createdAt?: string | undefined;
   user?: User | undefined;
+  reservations: ReservationDto[];
 }
+
 
 export interface GetFavoritesDto {
   listingIds: number[];
@@ -101,6 +102,8 @@ export interface ListingServiceClient {
   getFavorites(request: GetFavoritesDto): Observable<GetListingsResponseDto>;
 
   deleteListing(request: DeleteListingDto): Observable<DeleteResponseDto>;
+
+  getListingsByOption(request: GetListingsByOptionDto): Observable<GetListingsResponseDto>;
 }
 
 export interface ListingServiceController {
@@ -127,6 +130,10 @@ export interface ListingServiceController {
   deleteListing(
     request: DeleteListingDto,
   ): Promise<DeleteResponseDto> | Observable<DeleteResponseDto> | DeleteResponseDto;
+
+  getListingsByOption(
+    request: GetListingsByOptionDto,
+  ): Promise<GetListingsResponseDto> | Observable<GetListingsResponseDto> | GetListingsResponseDto;
 }
 
 export function ListingServiceControllerMethods() {
@@ -138,6 +145,7 @@ export function ListingServiceControllerMethods() {
       "getListingById",
       "getFavorites",
       "deleteListing",
+      "getListingsByOption",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
@@ -150,5 +158,6 @@ export function ListingServiceControllerMethods() {
     }
   };
 }
+
 
 export const LISTING_SERVICE_NAME = "ListingService";

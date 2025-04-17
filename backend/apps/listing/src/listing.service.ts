@@ -5,6 +5,7 @@ import {
   CreateListingDto,
   DeleteListingDto,
   GetFavoritesDto,
+  GetListingsByOptionDto,
   GetListingsResponseDto,
   ListingIdDto,
   RESERVATION_PACKAGE_NAME,
@@ -17,6 +18,7 @@ import { ClientGrpc, RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
 import cleanListing from '@app/common/functions/cleanListing';
 import { lastValueFrom } from 'rxjs';
+import { Prisma } from '../prisma/generated';
 
 @Injectable()
 export class ListingService implements OnModuleInit {
@@ -185,10 +187,10 @@ export class ListingService implements OnModuleInit {
     }
   }
 
-  async getLisingById(listingIdDto: ListingIdDto) {
+  async getListingById(listingIdDto: ListingIdDto) {
     const listingId = listingIdDto.listingId;
     const includeListing = listingIdDto.include?.listing || false;
-    // const includeListing=
+    const includeReservations = listingIdDto.include?.reservations || false;
     try {
       const listing = await this.prismaService.listing.findUnique({
         where: {
@@ -204,15 +206,42 @@ export class ListingService implements OnModuleInit {
         });
       }
       const finalListing = cleanListing(listing);
-      if (!includeListing) {
-        return finalListing;
+      if (includeListing && includeReservations) {
+        const user$ = this.userService.findOneUser({ id: finalListing.userId });
+        const user = await lastValueFrom(user$);
+        const $reservationsSource =
+          this.reservationService.getReservationByOption({
+            listingId,
+          });
+        const reservations = (await lastValueFrom($reservationsSource))
+          .reservations;
+        return {
+          ...finalListing,
+          user,
+          reservations,
+        };
       }
-      const user$ = this.userService.findOneUser({ id: finalListing.userId });
-      const user = await lastValueFrom(user$);
-      return {
-        ...finalListing,
-        user,
-      };
+      if (includeListing) {
+        const user$ = this.userService.findOneUser({ id: finalListing.userId });
+        const user = await lastValueFrom(user$);
+        return {
+          ...finalListing,
+          user,
+        };
+      }
+      if (includeReservations) {
+        const $reservationsSource =
+          this.reservationService.getReservationByOption({
+            listingId,
+          });
+        const reservations = (await lastValueFrom($reservationsSource))
+          .reservations;
+        return {
+          ...finalListing,
+          reservations,
+        };
+      }
+      return finalListing;
     } catch (error) {
       // Handle Prisma errors
       if (error instanceof RpcException) {
@@ -255,6 +284,81 @@ export class ListingService implements OnModuleInit {
       });
     }
   }
+
+  async getListingsByOption(getListingsByOptionDto: GetListingsByOptionDto) {
+    const {
+      startDate,
+      endDate,
+      bathroomCount,
+      guestCount,
+      category,
+      locationValue,
+      roomCount,
+    } = getListingsByOptionDto;
+    let query: Prisma.ListingWhereInput = {};
+    if (locationValue) {
+      query.locationValue = locationValue;
+    }
+    if (category) {
+      query.category = category;
+    }
+    if (guestCount) {
+      query.guestCount = {
+        gte: +guestCount,
+      };
+    }
+    if (bathroomCount) {
+      query.bathroomCount = {
+        gte: +bathroomCount,
+      };
+    }
+    if (roomCount) {
+      query.roomCount = {
+        gte: +roomCount,
+      };
+    }
+    const listings = await this.prismaService.listing.findMany({
+      where: query,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    const cleanedListing=listings.map((listing) => cleanListing(listing))
+    if (startDate && endDate) {
+      const listingsWithReservation = await Promise.all(
+        listings.map(async (listingItem) => {
+          const listing = await this.getListingById({
+            listingId: listingItem.id,
+            include: { reservations: true },
+          });
+          if (!listing) {
+            throw new RpcException({
+              code: status.NOT_FOUND,
+              details: 'Listing not found',
+            });
+          }
+          return listing;
+        }),
+      );
+      const finalListing = listingsWithReservation.filter((listing) => {
+        const hasConflict = listing.reservations.some((reservation) => {
+          const resStart = new Date(reservation.startDate);
+          const resEnd = new Date(reservation.endDate);
+          const reqStart = new Date(startDate);
+          const reqEnd = new Date(endDate);
+          // Check if the requested date range conflicts with any reservation
+          return (
+            (reqStart <= resEnd && reqStart >= resStart) ||
+            (reqEnd >= resStart && reqEnd <= resEnd)
+          );
+        });
+        return !hasConflict;
+      });
+      return finalListing
+    }
+    return cleanedListing;
+  }
+
   async getFavotires(getFavorites: GetFavoritesDto) {
     const favoriteIds = getFavorites.listingIds ?? [];
     const listings = await this.prismaService.listing.findMany({
@@ -302,7 +406,7 @@ export class ListingService implements OnModuleInit {
       });
       return { message: 'Listing deleted!' };
     } catch (error) {
-      console.log(error)
+      console.log(error);
       // Handle Prisma errors
       if (error instanceof RpcException) {
         throw error;

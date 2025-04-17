@@ -30,7 +30,7 @@ export class ReservationService implements OnModuleInit {
     return reservation;
   }
   async getReservationsByOption(reservationOptionDto:ReservationOptionDto){
-    const $source= this.reservationClient.getReservationByOption(reservationOptionDto)
+    const $source= this.reservationClient.getReservationByOption({...reservationOptionDto,include:{listing:true}})
     const reservations= await lastValueFrom($source)
     return reservations
   }

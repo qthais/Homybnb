@@ -165,6 +165,7 @@ export class ReservationService {
   async getReservationsByOption(reservationOptionDto: ReservationOptionDto) {
     try{
       const { listing, userId, listingId } = reservationOptionDto;
+      const includeListing=reservationOptionDto.include?.listing
       if (!userId &&!listingId&&! listing) {
         throw new RpcException({
           code: status.INVALID_ARGUMENT,
@@ -215,18 +216,22 @@ export class ReservationService {
           createdAt:'desc'
         }
       });
-      const reservationsWithListing=await Promise.all(
-        reservations.map(async(reservation)=>{
-          const $listing= this.listingClient.getListingById({listingId:reservation.listingId})
-          const listingData= await lastValueFrom($listing)
-          const cleanedReservation = cleanReservation(reservation);
-          return{
-            ...cleanedReservation,
-            listing:listingData
-          }
-        })
-      ) 
-      return reservationsWithListing
+      if(includeListing){
+        const reservationsWithListing=await Promise.all(
+          reservations.map(async(reservation)=>{
+            const $listing= this.listingClient.getListingById({listingId:reservation.listingId})
+            const listingData= await lastValueFrom($listing)
+            const cleanedReservation = cleanReservation(reservation);
+            return{
+              ...cleanedReservation,
+              listing:listingData
+            }
+          })
+        ) 
+        return reservationsWithListing
+      }
+      const cleanedReservations=reservations.map((reservation)=>cleanReservation(reservation))
+      return cleanedReservations
     }catch(error){
       console.error('Getting Reservations Error:', error);
       if (error instanceof RpcException) {
