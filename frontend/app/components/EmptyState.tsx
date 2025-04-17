@@ -23,7 +23,7 @@ const EmptyState: React.FC<EmptyState> = ({
     justify-center
     items-center
     '>
-            <Heading title={title} subtitle={subtitle} />
+            <Heading title={title} subtitle={subtitle} center />
             <div className="w-48 mt-4">
                 {showReset && (
                     <Button
