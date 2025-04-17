@@ -23,16 +23,42 @@ export default async function getListing(params:IListingParams) {
             category
         }
         =await params
+        let method='GET'
+        let data:any={}
         let url='/api/listings'
         if(userId){
             url='/api/listings/mine'
         }
-        const listingsResponse= await authenticatedAxios({
-            method:"GET",
-            url:url,
-        })
-        return listingsResponse.data.data.listings
+        if(roomCount||guestCount||bathroomCount||startDate||endDate||locationValue||category){
+            method='POST'
+            data={
+                roomCount,
+                guestCount,
+                bathroomCount,
+                startDate,
+                endDate,
+                locationValue,
+                category
+            }
+            console.log({data})
+            url='/api/listings/options'
+        }
+        let listingsResponse;
+        if(method=='GET'){
+            listingsResponse= await authenticatedAxios({
+                method:method,
+                url:url,
+            })
+        }else{
+            listingsResponse= await authenticatedAxios({
+                method:method,
+                url:url,
+                data
+            })
+        }
+        return listingsResponse.data.data.listings??[]
     }catch(err){
+        console.log(err)
         throw err.response.data
     }
 }

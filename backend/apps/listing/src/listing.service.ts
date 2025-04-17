@@ -341,15 +341,15 @@ export class ListingService implements OnModuleInit {
         }),
       );
       const finalListing = listingsWithReservation.filter((listing) => {
-        const hasConflict = listing.reservations.some((reservation) => {
+        const hasConflict = (listing.reservations || []).some((reservation) => {
           const resStart = new Date(reservation.startDate);
           const resEnd = new Date(reservation.endDate);
           const reqStart = new Date(startDate);
           const reqEnd = new Date(endDate);
           // Check if the requested date range conflicts with any reservation
           return (
-            (reqStart <= resEnd && reqStart >= resStart) ||
-            (reqEnd >= resStart && reqEnd <= resEnd)
+            (reqStart < resEnd && reqStart >= resStart) ||
+            (reqEnd > resStart && reqEnd <= resEnd)
           );
         });
         return !hasConflict;
