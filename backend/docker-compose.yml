@@ -1,0 +1,21 @@
+services:
+  auth-service:
+    image: ms-auth
+    env_file: apps/auth/.env
+    ports: [ "50051:50051" ]
+  listing-service:
+    image: ms-listing
+    env_file: apps/listing/.env
+    ports: [ "50052:50052" ]
+  reservation-service:
+    image: ms-reservation
+    env_file: apps/reservation/.env
+    ports: [ "50053:50053" ]
+  apigateway:
+    image: ms-apigateway
+    env_file: apps/apigateway/.env   # if needed
+    ports: [ "3000:3000" ]
+    depends_on:
+      - auth-service
+      - listing-service
+      - reservation-service
