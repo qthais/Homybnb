@@ -8,7 +8,7 @@ const error:React.FC<ErrorStateProps> = ({
     error
 }) => {
     useEffect(()=>{
-        console.log(error)
+        console.log(error.message)
     },[error])
   return (
     <EmptyState

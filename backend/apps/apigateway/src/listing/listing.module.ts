@@ -15,7 +15,7 @@ import { JwtService } from '@nestjs/jwt';
         options: {
           package: LISTING_PACKAGE_NAME,
           protoPath: join(__dirname, '../listing.proto'),
-          url: '0.0.0.0:50052',
+          url: process.env.LISTING_GRPC_URL||'0.0.0.0:50052',
         },
       }
     ]),

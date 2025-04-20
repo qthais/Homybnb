@@ -10,7 +10,7 @@ async function bootstrap() {
     options: {
       package: AUTH,
       protoPath: join(__dirname, '../auth.proto'),
-      url: '0.0.0.0:50051',
+      url: process.env.AUTH_GRPC_URL||'0.0.0.0:50051',
     },
   });
   await app.listen()

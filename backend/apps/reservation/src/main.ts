@@ -10,7 +10,7 @@ async function bootstrap() {
     options: {
       package: RESERVATION_PACKAGE_NAME,
       protoPath: join(__dirname, '../reservation.proto'),
-      url: '0.0.0.0:50053',
+      url: process.env.RESERVATION_GRPC_URL||'0.0.0.0:50053',
     },
   });
   await app.listen()
