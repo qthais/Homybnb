@@ -385,12 +385,9 @@ export class ListingService implements OnModuleInit {
         });
       const reservations = (await lastValueFrom($reservationsSource))
         .reservations;
-      const deletingReservations = reservations.filter(
-        (reservation) => reservation.listing?.userId == userId,
-      );
-      if (deletingReservations.length != 0) {
+      if (reservations.length != 0) {
         await Promise.all(
-          deletingReservations.map(async (reservation) => {
+          reservations.map(async (reservation) => {
             return await lastValueFrom(
               this.reservationService.deleteReservationById({
                 reservationId: reservation.id,
@@ -404,7 +401,7 @@ export class ListingService implements OnModuleInit {
           id: listingId,
         },
       });
-      return { message: 'Listing deleted!' };
+      return { message: 'Listing and all associated reservations deleted successfully!' };
     } catch (error) {
       console.log(error);
       // Handle Prisma errors

@@ -52,7 +52,7 @@ export class ReservationService {
 
       throw new RpcException({
         code: status.INTERNAL,
-        details: 'Failed to create reservation',
+        details: 'Failed to delete reservation',
       });
     }
   }
@@ -82,7 +82,7 @@ export class ReservationService {
 
       throw new RpcException({
         code: status.INTERNAL,
-        details: 'Failed to create reservation',
+        details: 'Failed to get reservation',
       });
     }
   }
@@ -113,7 +113,7 @@ export class ReservationService {
       }
       throw new RpcException({
         code: status.INTERNAL,
-        details: 'Failed to create reservation',
+        details: 'Failed to delete reservation',
       });
     }
   }
@@ -157,7 +157,7 @@ export class ReservationService {
 
       throw new RpcException({
         code: status.INTERNAL,
-        details: 'Failed to create reservation',
+        details: 'Failed to delete reservation',
       });
     }
 
@@ -240,7 +240,7 @@ export class ReservationService {
 
       throw new RpcException({
         code: status.INTERNAL,
-        details: 'Failed to create reservation',
+        details: 'Failed to retrieve reservation',
       });
     }
 

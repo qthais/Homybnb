@@ -22,7 +22,7 @@ const PropertiesClient:React.FC<PropertiesClientProps> = ({
         try{
             setDeletingId(id);
             await axios.delete(`/api/listings/${id}`)
-            toast.success("Listing deleted!")
+            toast.success("Listing and all associated reservations deleted successfully!")
             router.refresh()
         }catch(err){
             toast.error(err?.response.data.message||"Something went wrong")

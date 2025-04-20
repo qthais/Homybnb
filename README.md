@@ -1,4 +1,4 @@
-# 🏡 Homybnb
+# 🏡 Homybnb (Wait for production with k8s)
 
 Homybnb is a modern, scalable short-term rental platform inspired by Airbnb. It allows users to list properties, make reservations, and manage bookings with a seamless and secure experience. Built with a full microservices architecture, it utilizes modern technologies for performance, scalability, and maintainability.
 
@@ -6,8 +6,7 @@ Homybnb is a modern, scalable short-term rental platform inspired by Airbnb. It 
 
 ## 🌐 Live Demo
 
-- **Live Site**: [https://homybnb.onrender.com](https://homybnb.onrender.com)  
-- **Demo Video**: [Watch Demo](https://drive.google.com/)
+- **Demo Video**: [Watch Demo](https://drive.google.com/file/d/1SaHtcQZPBcWwszrJFD0rV9coEd_J9l2J/view?usp=sharing)
 
 ---
 
