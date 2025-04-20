@@ -1,6 +1,7 @@
 # .dockerignore at the repo root
 node_modules
 dist
+.env
 *.log
 .git
 .gitignore
