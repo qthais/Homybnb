@@ -1,16 +1,16 @@
 services:
   auth-service:
-    image: ms-auth
+    image: qthais/ms-auth-homybnb:1.0
     env_file: apps/auth/.env
     expose:
       - 50051
   listing-service:
-    image: ms-listing
+    image: qthais/ms-listing-homybnb:2.0
     env_file: apps/listing/.env
     expose:
       - 50052
   reservation-service:
-    image: ms-reservation
+    image: qthais/ms-reservation-homybnb:1.0
     env_file: apps/reservation/.env
     expose:
       - 50053

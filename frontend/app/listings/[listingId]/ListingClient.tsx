@@ -66,6 +66,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
             setDateRange(initialDateRange)
             router.push('/trips')
         } catch (err:any) {
+            console.log(err)
             toast.error(err?.response.data.message || "Some thing went wrong!")
         } finally {
             setIsLoading(false)
