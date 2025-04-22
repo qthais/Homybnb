@@ -31,7 +31,7 @@ const RegisterModal = () => {
             LoginModal.onOpen()
             toast.success('Register successfully')
             RegisterModal.onClose()
-        } catch (err) {
+        } catch (err:any) {
             toast.error(err.response?.data.message||'Some thing went wrong!')
         } finally {
             setIsLoading(false)

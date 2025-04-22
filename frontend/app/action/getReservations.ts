@@ -1,14 +1,14 @@
 import { authenticatedAxios } from "@/utils/authenticatedAxiosServer"
 
 interface IParams{
-    listingId?:number,
+    listingId?:string,
     userId?:string,
     authorId?:string,
 }
 
 export default async function getReservations(params:IParams){
     try{
-        const {listingId,userId,authorId}=await params
+        const {listingId,userId,authorId}=params
         const query:any={}
         if(listingId){
             query.listingId=listingId
@@ -26,7 +26,7 @@ export default async function getReservations(params:IParams){
         })
         const reservations=res.data.data.reservations||[]
         return reservations
-    }catch(err){
+    }catch(err:any){
         throw err.response.data
     }
 }

@@ -17,7 +17,7 @@ export default async function getCurrentUser() {
             return session?.user
         }
         return null
-    }catch(err){
+    }catch(err:any){
         return null
     }
     

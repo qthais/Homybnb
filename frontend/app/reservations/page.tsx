@@ -8,9 +8,11 @@ import ReservationsClient from './ReservationsClient';
 const ReservationPages = async () => {
     const currentUser = await getCurrentUser();
     if (!currentUser) {
+        return(
         <ClientOnly>
             <EmptyState title='Unauthorize' subtitle='Please login' />
         </ClientOnly>
+        )
     }
     const reservations = await getReservations({
         authorId:currentUser?.id

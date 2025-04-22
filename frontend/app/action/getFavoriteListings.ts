@@ -12,7 +12,7 @@ export default async function getFavoriteListings() {
             }
         })
         return favorites.data.data.listings
-    }catch(err){
+    }catch(err:any){
         throw err.response.data
     }
 }

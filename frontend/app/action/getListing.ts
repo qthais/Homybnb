@@ -40,7 +40,6 @@ export default async function getListing(params:IListingParams) {
                 locationValue,
                 category
             }
-            console.log({data})
             url='/api/listings/options'
         }
         let listingsResponse;
@@ -57,7 +56,7 @@ export default async function getListing(params:IListingParams) {
             })
         }
         return listingsResponse.data.data.listings??[]
-    }catch(err){
+    }catch(err:any){
         console.log(err)
         throw err.response.data
     }

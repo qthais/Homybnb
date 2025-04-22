@@ -30,7 +30,7 @@ async function refreshToken(token: JWT): Promise<JWT> {
       },
       // string → number
     };
-  } catch (err) {
+  } catch (err:any) {
     console.error(
       "❌ Failed to refresh token:",
       err?.response?.data || err.message
@@ -78,7 +78,7 @@ export const authOptions: AuthOptions = {
           } else {
             throw new Error("User not found in response");
           }
-        } catch (err) {
+        } catch (err:any) {
           throw err.response.data;
         }
       },

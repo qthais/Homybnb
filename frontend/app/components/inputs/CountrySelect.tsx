@@ -1,5 +1,6 @@
 'use client'
 import useCountries from '@/app/hooks/useCountries';
+import Image from 'next/image';
 import React from 'react'
 import Select from 'react-select';
 export type CountrySelectValue={
@@ -41,7 +42,7 @@ const CountrySelect:React.FC<CountrySelectProps> = ({
         onChange={(value)=>onChange(value as CountrySelectValue)}
         formatOptionLabel={(option:any)=>(
             <div className='flex flex-row items-center gap-3'>
-                <img className='w-8' src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${option.value}.svg`} alt="" />
+                <Image width={32} height={32} src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${option.value}.svg`} alt="" />
                 {/* <div>{option.flag}</div> */}
                 <div>
                     {option.label},

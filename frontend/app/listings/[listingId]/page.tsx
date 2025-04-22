@@ -6,14 +6,14 @@ import React from 'react'
 import ListingClient from './ListingClient'
 import getReservations from '@/app/action/getReservations'
 interface IParams {
-  listingId?: number
+  listingId?: string
 }
-const ListingPage = async ({ params }: { params: IParams }) => {
+const ListingPage = async ({ params }: { params: Promise<IParams> }) => {
   const {listingId}= await params
   const res = await axiosClient.get(`/api/listings/${listingId}`)
   const listing = res.data.data.listing
   const currentUser=await getCurrentUser()
-  const reservations= await getReservations(params)
+  const reservations= await getReservations({listingId})
   if (!listing) {
     return (
       <ClientOnly>

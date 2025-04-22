@@ -35,11 +35,11 @@ const useFavorite=({
             await update({ favoriteIds: updatedFavoriteIds });
             router.refresh()
             toast.success("Update successfully!")
-        }catch(err){
+        }catch(err:any){
             console.log(err)
             toast.error(err.response?.data.message||"Some thing went wrong!")
         }
-    },[currentUser,hasFavorited,listingId,loginModal,router,axios])
+    },[currentUser,hasFavorited,listingId,loginModal,router,axios,update])
     return {
         hasFavorited,
         toggleFavorite
