@@ -1,7 +1,9 @@
 # 🏡 Homybnb ( Production stopped due to AWS pricing )
 
 Homybnb is a modern, scalable short-term rental platform inspired by Airbnb. It allows users to list properties, make reservations, and manage bookings with a seamless and secure experience. Built with a full microservices architecture, it utilizes modern technologies for performance, scalability, and maintainability.
+> 📉 Production was paused after evaluating AWS costs for long-term hosting.
 
+![AWS Pricing Screenshot](./frontend/public/images/aws_bill.png)
 ---
 
 ## 🌐 Live Demo
