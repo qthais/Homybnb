@@ -154,7 +154,7 @@ export class ListingService implements OnModuleInit {
     });
     return cleanListing(newListing);
   }
-  async getLisingsOfUser(userId: string) {
+  async getListingsOfUser(userId: string) {
     try {
       const listings = await this.prismaService.listing.findMany({
         where: {

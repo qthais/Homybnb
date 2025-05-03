@@ -35,7 +35,7 @@ export class ListingController implements ListingServiceController {
     return listing
   }
   async getListingsOfUser(userIdDto: UserIdDto): Promise<GetListingsResponseDto>  {
-    const listing = await this.listingService.getLisingsOfUser(userIdDto.userId);
+    const listing = await this.listingService.getListingsOfUser(userIdDto.userId);
     return { listings: listing };
   }
   async getListings(): Promise<GetListingsResponseDto> {
