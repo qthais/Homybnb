@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
 import * as bcrypt from 'bcryptjs';
+import cleanUser from '@app/common/functions/cleanUser';
 
 const mockPrismaService = {
   user: {
@@ -20,7 +21,7 @@ const mockPrismaService = {
 };
 
 const mockJwtService = {
-  signAsync: jest.fn().mockResolvedValue('mockToken'),
+  signAsync: jest.fn().mockResolvedValue('mockReturningToken'),
 };
 
 const mockConfigService = {
@@ -53,6 +54,7 @@ describe('AuthService', () => {
       } catch (e) {
         expect(e).toBeInstanceOf(RpcException);
         expect(e.getError().details).toBe('Email and password are required!');
+        expect(e.getError().code).toBe(status.INVALID_ARGUMENT);
       }
     });
 
@@ -62,29 +64,46 @@ describe('AuthService', () => {
         await service.login({ email: 'test@example.com', password: '123456' });
       } catch (e) {
         expect(e.getError().details).toBe('Invalid credentials!');
+        expect(e.getError().code).toBe(status.INVALID_ARGUMENT);
       }
     });
 
     it('should throw if password does not match', async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue({ hashedPassword: 'hashed' });
-      jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
+      mockPrismaService.user.findUnique.mockResolvedValue({
+        hashedPassword: 'hashed',
+      });
+      jest
+        .spyOn(bcrypt, 'compare')
+        .mockImplementation(() => Promise.resolve(false));
 
       try {
         await service.login({ email: 'test@example.com', password: 'wrong' });
       } catch (e) {
         expect(e.getError().details).toBe('Invalid credentails!');
+        expect(e.getError().code).toBe(status.INVALID_ARGUMENT);
       }
     });
 
     it('should return tokens if credentials are valid', async () => {
-      const user = { id: 'u1', email: 'test@example.com', hashedPassword: 'hashed' };
+      const user = {
+        id: 'u1',
+        email: 'test@example.com',
+        hashedPassword: 'hashed',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
       mockPrismaService.user.findUnique.mockResolvedValue(user);
-      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+      jest
+        .spyOn(bcrypt, 'compare')
+        .mockImplementation(() => Promise.resolve(true));
 
-      const result = await service.login({ email: user.email, password: '123456' });
-
-      expect(result).toHaveProperty('user');
-      expect(result.tokens.accessToken).toBe('mockToken');
+      const result = await service.login({
+        email: user.email,
+        password: '123456',
+      });
+      console.log(result);
+      expect(result.user).toEqual(cleanUser(user));
+      expect(result.tokens.accessToken).toBe('mockReturningToken');
     });
   });
 
@@ -93,25 +112,48 @@ describe('AuthService', () => {
       try {
         await service.register({ email: '', name: '', password: '' });
       } catch (e) {
-        expect(e.getError().details).toBe('Email, name, and password are required!');
+        expect(e.getError().details).toBe(
+          'Email, name, and password are required!',
+        );
+        expect(e.getError().code).toBe(status.INVALID_ARGUMENT);
       }
     });
 
     it('should throw if user exists', async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue({ email: 'test@example.com' });
+      mockPrismaService.user.findUnique.mockResolvedValue({
+        email: 'test@example.com',
+      });
       try {
-        await service.register({ email: 'test@example.com', name: 'User', password: '123456' });
+        await service.register({
+          email: 'test@example.com',
+          name: 'User',
+          password: '123456',
+        });
       } catch (e) {
-        expect(e.getError().details).toBe('User with this email already exists!');
+        expect(e.getError().details).toBe(
+          'User with this email already exists!',
+        );
+        expect(e.getError().code).toBe(status.ALREADY_EXISTS);
       }
     });
 
     it('should create a new user if valid', async () => {
+      const mockUser = {
+        id: 'u1',
+        email: 'test@example.com',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
       mockPrismaService.user.findUnique.mockResolvedValue(null);
-      mockPrismaService.user.create.mockResolvedValue({ id: 'u1', email: 'test@example.com' });
+      mockPrismaService.user.create.mockResolvedValue(mockUser);
 
-      const result = await service.register({ email: 'test@example.com', name: 'User', password: '123456' });
-      expect(result.email).toBe('test@example.com');
+      const result = await service.register({
+        email: 'test@example.com',
+        name: 'User',
+        password: '123456',
+      });
+      console.log({ registerUser: result });
+      expect(result).toEqual(cleanUser(mockUser));
     });
   });
 });
