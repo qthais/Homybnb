@@ -1,4 +1,4 @@
-name: CI Workflow
+name: BE Workflow
 
 # Trigger on push to any branch or pull requests targeting 'main' branch
 on:
@@ -26,11 +26,15 @@ jobs:
 
       # Step 3: Install dependencies
       - name: Install dependencies
-        run: npm install
+        run: |
+            cd backend
+            npm install
 
       # Step 4: Run tests
       - name: Run tests
-        run: npm run test
+        run: |
+            cd backend
+            npm run test
 
       # Optional: Step 5: If you want to publish a code coverage report
       # - name: Upload coverage results
