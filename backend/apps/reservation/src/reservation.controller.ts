@@ -1,7 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller} from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto, DeleteOptionDto, DeleteReservationDto, ReservationDto, ReservationIdDto, ReservationOptionDto, ReservationsDto, ReservationServiceController, ReservationServiceControllerMethods } from '@app/common';
-import { Observable } from 'rxjs';
 
 @Controller()
 @ReservationServiceControllerMethods()
