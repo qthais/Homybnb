@@ -28,15 +28,15 @@ jobs:
       - name: Install dependencies
         run: |
             cd backend
-            npx prisma generate --schema=apps/auth/prisma/schema.prisma
-            npx prisma generate --schema=apps/listing/prisma/schema.prisma
-            npx prisma generate --schema=apps/reservation/prisma/schema.prisma
             npm install
 
       # Step 4: Run tests
       - name: Run tests
         run: |
             cd backend
+            npx prisma generate --schema=apps/auth/prisma/schema.prisma
+            npx prisma generate --schema=apps/listing/prisma/schema.prisma
+            npx prisma generate --schema=apps/reservation/prisma/schema.prisma
             npm run test
 
       # Optional: Step 5: If you want to publish a code coverage report
