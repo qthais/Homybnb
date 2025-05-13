@@ -35,7 +35,7 @@ export interface ListingIdDto {
 }
 
 export interface Include {
-  listing?: boolean | undefined;
+  user?: boolean | undefined;
   reservations?: boolean | undefined;
 }
 

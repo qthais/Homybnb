@@ -189,7 +189,7 @@ export class ListingService implements OnModuleInit {
 
   async getListingById(listingIdDto: ListingIdDto) {
     const listingId = listingIdDto.listingId;
-    const includeListing = listingIdDto.include?.listing || false;
+    const includeUser = listingIdDto.include?.user || false;
     const includeReservations = listingIdDto.include?.reservations || false;
     try {
       const listing = await this.prismaService.listing.findUnique({
@@ -206,7 +206,7 @@ export class ListingService implements OnModuleInit {
         });
       }
       const finalListing = cleanListing(listing);
-      if (includeListing && includeReservations) {
+      if (includeUser && includeReservations) {
         const user$ = this.userService.findOneUser({ id: finalListing.userId });
         const user = await lastValueFrom(user$);
         const $reservationsSource =
@@ -221,7 +221,7 @@ export class ListingService implements OnModuleInit {
           reservations,
         };
       }
-      if (includeListing) {
+      if (includeUser) {
         const user$ = this.userService.findOneUser({ id: finalListing.userId });
         const user = await lastValueFrom(user$);
         return {

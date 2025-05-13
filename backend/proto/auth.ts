@@ -24,6 +24,10 @@ export interface Sub {
   userId: string;
 }
 
+export interface EmailDto {
+  email: string;
+}
+
 export interface Tokens {
   accessToken: string;
   refreshToken: string;
@@ -174,6 +178,8 @@ export interface UserServiceClient {
   updateUser(request: UpdateUserDto): Observable<User>;
 
   removeUser(request: RemoveUserDto): Observable<User>;
+
+  findUserByEmail(request: EmailDto): Observable<User>;
 }
 
 export interface UserServiceController {
@@ -186,11 +192,20 @@ export interface UserServiceController {
   updateUser(request: UpdateUserDto): Promise<User> | Observable<User> | User;
 
   removeUser(request: RemoveUserDto): Promise<User> | Observable<User> | User;
+
+  findUserByEmail(request: EmailDto): Promise<User> | Observable<User> | User;
 }
 
 export function UserServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createUser", "findAllUsers", "findOneUser", "updateUser", "removeUser"];
+    const grpcMethods: string[] = [
+      "createUser",
+      "findAllUsers",
+      "findOneUser",
+      "updateUser",
+      "removeUser",
+      "findUserByEmail",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("UserService", method)(constructor.prototype[method], method, descriptor);

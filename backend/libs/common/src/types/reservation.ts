@@ -34,6 +34,7 @@ export interface DeleteReservationDto {
 
 export interface ReservationIdDto {
   reservationId: number;
+  userEmail?: string | undefined;
 }
 
 export interface ListingFilter {
@@ -50,6 +51,7 @@ export interface CreateReservationDto {
   startDate: string;
   endDate: string;
   totalPrice: number;
+  userEmail?: string | undefined;
 }
 
 export interface ReservationDto {

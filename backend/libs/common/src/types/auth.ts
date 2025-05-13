@@ -8,7 +8,7 @@
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 
-export const authProtobufPackage = "auth";
+export const protobufPackage = "auth";
 
 export interface LoginResponseDto {
   user: User | undefined;
@@ -22,6 +22,10 @@ export interface Payload {
 
 export interface Sub {
   userId: string;
+}
+
+export interface EmailDto {
+  email: string;
 }
 
 export interface Tokens {
@@ -89,12 +93,10 @@ export interface UpdateUserDto {
   id: string;
   name?: string | undefined;
   email?: string | undefined;
-  password?:
-    | string
-    | undefined;
-  /** repeated string favoriteIds = 5; */
+  password?: string | undefined;
   image?: string | undefined;
   favoriteIds: number[];
+  /** repeated string favoriteIds = 5; */
   isEmptyFavoriteIds?: boolean | undefined;
 }
 
@@ -176,6 +178,8 @@ export interface UserServiceClient {
   updateUser(request: UpdateUserDto): Observable<User>;
 
   removeUser(request: RemoveUserDto): Observable<User>;
+
+  findUserByEmail(request: EmailDto): Observable<User>;
 }
 
 export interface UserServiceController {
@@ -188,11 +192,20 @@ export interface UserServiceController {
   updateUser(request: UpdateUserDto): Promise<User> | Observable<User> | User;
 
   removeUser(request: RemoveUserDto): Promise<User> | Observable<User> | User;
+
+  findUserByEmail(request: EmailDto): Promise<User> | Observable<User> | User;
 }
 
 export function UserServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createUser", "findAllUsers", "findOneUser", "updateUser", "removeUser"];
+    const grpcMethods: string[] = [
+      "createUser",
+      "findAllUsers",
+      "findOneUser",
+      "updateUser",
+      "removeUser",
+      "findUserByEmail",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("UserService", method)(constructor.prototype[method], method, descriptor);

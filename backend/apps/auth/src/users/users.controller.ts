@@ -2,9 +2,11 @@ import { Controller } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
   CreateUserDto,
+  EmailDto,
   FindOneUserDto,
   RemoveUserDto,
   UpdateUserDto,
+  User,
   UserServiceController,
   UserServiceControllerMethods,
 } from '@app/common/types/auth';
@@ -13,6 +15,9 @@ import {
 @UserServiceControllerMethods()
 export class UsersController implements UserServiceController {
   constructor(private readonly usersService: UsersService) {}
+  async findUserByEmail(emailDto: EmailDto): Promise<User> {
+    return await this.usersService.findUserByEmail(emailDto.email)
+  }
 
   async createUser(createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);

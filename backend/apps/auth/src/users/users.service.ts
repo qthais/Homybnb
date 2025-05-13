@@ -53,6 +53,37 @@ export class UsersService {
     }
   }
 
+  async findUserByEmail(email:string){
+    if(!email){
+            throw new RpcException({
+        code: status.INVALID_ARGUMENT,
+        details: 'Email is not provided!',
+      });
+    }
+    try {
+      const user = await this.prismaService.user.findUnique({
+        where: { email },
+      });
+
+      if (!user) {
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          details: 'User not found',
+        });
+      }
+
+      return cleanUser(user);
+    } catch (error) {
+      if (error instanceof RpcException) {
+        throw error; // Propagate the original NOT_FOUND error
+      }
+      throw new RpcException({
+        code: status.INTERNAL,
+        details: 'Error fetching user',
+      });
+    }
+  }
+
   async findOne(id: string) {
     if (!id) {
       throw new RpcException({

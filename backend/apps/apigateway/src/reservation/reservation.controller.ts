@@ -30,9 +30,11 @@ export class ReservationController {
     @Req() req: ExtendRequest,
   ) {
     const userId = req.user.sub.userId;
+    const userEmail=req.user.email
     const res = await this.reservationService.createReservation({
       ...createReservaionDto,
       userId,
+      userEmail
     });
     return new ResponseDto(HttpStatus.OK, 'Create reservation successfully!', {
       reservaion: res,

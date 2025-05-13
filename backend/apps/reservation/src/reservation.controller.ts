@@ -10,10 +10,10 @@ export class ReservationController implements ReservationServiceController {
     return await this.reservationService.deleteReservationsByOption(deleteReservationByOption)
   }
   async deleteReservationById(reservationIdDto: ReservationIdDto): Promise<DeleteReservationDto> {
-    return await this.reservationService.deleteReservationById(reservationIdDto.reservationId)
+    return await this.reservationService.deleteReservationById({reservationId:reservationIdDto.reservationId})
   }
   async getReservationById(reservationIdDto: ReservationIdDto): Promise<ReservationDto>  {
-    const reservation = await this.reservationService.getReservationById(reservationIdDto.reservationId)
+    const reservation = await this.reservationService.getReservationById({reservationId:reservationIdDto.reservationId})
     return reservation
   }
   async getReservationByOption(reservationOptionDto: ReservationOptionDto): Promise<ReservationsDto>  {

@@ -30,7 +30,7 @@ message ListingIdDto{
 }
 
 message Include{
-  optional bool listing=1;
+  optional bool user=1;
   optional bool reservations=2;
 }
 

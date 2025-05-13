@@ -72,7 +72,7 @@ export class ListingController {
   async getListingById(@Param('id', ParseIntPipe) id: number) {
     const res = await this.listingService.getListingById({
       listingId: id,
-      include: { listing: true },
+      include: { user: true },
     });
     return new ResponseDto(HttpStatus.OK, 'Retrieving listing successfully', {
       listing: res,
