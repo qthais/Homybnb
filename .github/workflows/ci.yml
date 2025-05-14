@@ -55,6 +55,7 @@ jobs:
       - name: Build and push Docker image for ${{ matrix.service }}
         uses: docker/build-push-action@v5
         with:
-          context: ./backend/apps/${{ matrix.service }}
+          context: ./backend          # Context phải là thư mục có đủ `proto/`, `libs/`, etc.
+          file: ./backend/apps/${{ matrix.service }}/Dockerfile
           push: true
           tags: qthais/ms-${{ matrix.service }}-homybnb:latest
