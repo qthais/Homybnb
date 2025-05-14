@@ -267,7 +267,7 @@ describe('ListingService', () => {
 
       const result = await service.getListingById({
         listingId: 1,
-        include: { listing: true },
+        include: { user: true },
       });
       expect(result).toEqual({
         ...cleanListing(listing),
@@ -333,7 +333,7 @@ describe('ListingService', () => {
     
       const result = await service.getListingById({
         listingId: 1,
-        include: { listing: true, reservations: true },
+        include: { user: true, reservations: true },
       });
     
       expect(result).toEqual({
