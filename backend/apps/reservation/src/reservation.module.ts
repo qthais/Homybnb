@@ -6,7 +6,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AUTH_PACKAGE_NAME, LISTING_PACKAGE_NAME } from '@app/common';
 import { join } from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { EmailModule } from 'apps/email/email.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [

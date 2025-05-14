@@ -17,8 +17,8 @@ import { status } from '@grpc/grpc-js';
 import cleanReservation from '@app/common/functions/cleanReservation';
 import { lastValueFrom } from 'rxjs';
 import { Reservation } from '../prisma/generated';
-import { EmailService } from 'apps/email/email.service';
 import { format } from 'date-fns';
+import { EmailService } from './email/email.service';
 
 @Injectable()
 export class ReservationService {

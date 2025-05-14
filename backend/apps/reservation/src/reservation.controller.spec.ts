@@ -56,7 +56,7 @@ describe('ReservationController', () => {
 
     const res = await controller.getReservationById({reservationId:1});
     expect(res).toBe(mockRes);
-    expect(service.getReservationById).toHaveBeenCalledWith(1);
+    expect(service.getReservationById).toHaveBeenCalledWith({ reservationId: 1 });
   });
 
   it('should delegate deleteReservationById to service', async () => {
@@ -65,7 +65,7 @@ describe('ReservationController', () => {
 
     const res = await controller.deleteReservationById({reservationId:1});
     expect(res).toBe(result);
-    expect(service.deleteReservationById).toHaveBeenCalledWith(1);
+    expect(service.deleteReservationById).toHaveBeenCalledWith({ reservationId: 1 });
   });
 
   it('should delegate deleteReservationsByOption to service', async () => {
