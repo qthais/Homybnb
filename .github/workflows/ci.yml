@@ -10,6 +10,7 @@ on:
       - main  # Triggers on pull requests targeting 'main'
     paths:
       - 'backend/**' 
+      - '.github/workflows/**'
 
 jobs:
   build:
