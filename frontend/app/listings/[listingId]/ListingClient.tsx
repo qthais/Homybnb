@@ -99,7 +99,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
         } finally {
             setIsLoading(false)
         }
-    }, [totalPrice, axios, dateRange, listing.id, router, currentUser, loginModal,listing])
+    }, [totalPrice, axios, dateRange, router, currentUser, loginModal,listing])
     useEffect(() => {
         if (dateRange.startDate && dateRange.endDate) {
             const dayCount = differenceInCalendarDays(
