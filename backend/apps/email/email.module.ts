@@ -21,7 +21,7 @@ import {EjsAdapter} from '@nestjs-modules/mailer/dist/adapters/ejs.adapter'
           from: 'Qtdemy'
         },
         template:{
-          dir:resolve(process.cwd(), 'email-templates'),
+          dir:resolve(process.cwd(), 'libs/common/src/email-templates'),
           adapter:new EjsAdapter(),
           options:{
             strict:false

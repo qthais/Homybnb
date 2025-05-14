@@ -43,14 +43,10 @@ export class ReservationService {
         details: 'Listing ID is required!',
       });
     }
-    const $listingSrc = this.listingClient.getListingById({
-      listingId: createReservationDto.listingId,
-    });
     const $nameSrc = this.userClient.findUserByEmail({
       email: createReservationDto.userEmail!,
     });
     const user = await lastValueFrom($nameSrc);
-    const listing = await lastValueFrom($listingSrc);
     try {
       const reservation = await this.prismaService.reservation.create({
         data: {
@@ -64,7 +60,7 @@ export class ReservationService {
       this.emailService.sendConfirmationEmail({
         email: createReservationDto.userEmail!,
         name: user.name!,
-        propertyName: listing.title,
+        propertyName: "This listing is no longer exist",
         reservationNumber: reservation.id,
         checkInDate: format(new Date(reservation.startDate), 'MMM dd, yyyy'),
         checkOutDate: format(new Date(reservation.endDate), 'MMM dd, yyyy'),
@@ -208,7 +204,7 @@ export class ReservationService {
             new Date(deleteReservation.endDate),
             'MMM dd, yyyy',
           ),
-          propertyName: 'Test',
+          propertyName: listingData.title,
           totalPrice: deleteReservation.totalPrice,
         });
         return {

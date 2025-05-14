@@ -1,4 +1,5 @@
 'use client'
+import { initiateCheckout } from '@/app/action/makePayment';
 import Container from '@/app/components/Container';
 import ListingHead from '@/app/components/listings/ListingHead';
 import ListingInfo from '@/app/components/listings/ListingInfo';
@@ -54,31 +55,58 @@ const ListingClient: React.FC<ListingClientProps> = ({
             return loginModal.onOpen()
         }
         setIsLoading(true)
+        const requestData = {
+            listing: listing,   // Send the listing title
+            totalPrice,                    // Send the calculated total price
+            startDate: dateRange.startDate, // Send the start date
+            endDate: dateRange.endDate,     // Send the end date
+        };
         try {
 
-            await axios.post('/api/reservations', {
-                totalPrice,
-                startDate: dateRange.startDate,
-                endDate: dateRange.endDate,
-                listingId: listing?.id
-            })
+            // await axios.post('/api/reservations', {
+            //     totalPrice,
+            //     startDate: dateRange.startDate,
+            //     endDate: dateRange.endDate,
+            //     listingId: listing?.id
+            // })
+            const response = await fetch('/api/checkout-sessions/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // Set content type to JSON
+                },
+                body: JSON.stringify(requestData), // Send the request data as JSON
+            });
+
+            // Parse the JSON response
+            const session = await response.json();
+
+            // Check if there was an error in the response
+            if (session.error) {
+                console.error('Error creating Stripe session:', session.error);
+                return;
+            }
+
+            const sessionId = session.id;
+
+            // Step 3: Redirect to Stripe checkout page
+            await initiateCheckout(sessionId);
             toast.success('Listing reserved!');
             setDateRange(initialDateRange)
             router.push('/trips')
-        } catch (err:any) {
+        } catch (err: any) {
             console.log(err)
             toast.error(err?.response.data.message || "Some thing went wrong!")
         } finally {
             setIsLoading(false)
         }
-    }, [totalPrice, axios, dateRange, listing.id, router, currentUser, loginModal])
+    }, [totalPrice, axios, dateRange, listing.id, router, currentUser, loginModal,listing])
     useEffect(() => {
         if (dateRange.startDate && dateRange.endDate) {
             const dayCount = differenceInCalendarDays(
                 dateRange.endDate,
                 dateRange.startDate
             );
-            console.log({dayCount})
+            console.log({ dayCount })
             if (dayCount && listing.price) {
                 setTotalPrice(dayCount * listing.price)
             } else {
