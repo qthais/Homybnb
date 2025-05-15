@@ -9,6 +9,7 @@ import useLoginModal from '@/app/hooks/useLoginModal';
 import { Listing, Reservation, SafeUser } from '@/types/SchemaType'
 import { useAuthenticatedAxios } from '@/utils/authenticatedAxiosClient';
 import { differenceInCalendarDays, eachDayOfInterval } from 'date-fns';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Range } from 'react-date-range';
@@ -32,6 +33,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
     reservations = [],
     currentUser
 }) => {
+    const { data: session } = useSession()
     const axios = useAuthenticatedAxios()
     const loginModal = useLoginModal()
     const router = useRouter()
@@ -51,11 +53,13 @@ const ListingClient: React.FC<ListingClientProps> = ({
     const [totalPrice, setTotalPrice] = useState(listing.price)
     const [dateRange, setDateRange] = useState<Range>(initialDateRange)
     const onCreateReservation = useCallback(async () => {
+        const token = session?.tokens?.accessToken
         if (!currentUser) {
             return loginModal.onOpen()
         }
         setIsLoading(true)
         const requestData = {
+            accessToken:token,
             listing: listing,   // Send the listing title
             totalPrice,                    // Send the calculated total price
             startDate: dateRange.startDate, // Send the start date
@@ -78,28 +82,25 @@ const ListingClient: React.FC<ListingClientProps> = ({
             });
 
             // Parse the JSON response
-            const session = await response.json();
+            const stripeSession = await response.json();
 
             // Check if there was an error in the response
-            if (session.error) {
-                console.error('Error creating Stripe session:', session.error);
+            if (stripeSession.error) {
+                console.error('Error creating Stripe stripeSession:', stripeSession.error);
                 return;
             }
 
-            const sessionId = session.id;
+            const sessionId = stripeSession.id;
 
             // Step 3: Redirect to Stripe checkout page
             await initiateCheckout(sessionId);
-            toast.success('Listing reserved!');
-            setDateRange(initialDateRange)
-            router.push('/trips')
         } catch (err: any) {
             console.log(err)
             toast.error(err?.response.data.message || "Some thing went wrong!")
         } finally {
             setIsLoading(false)
         }
-    }, [totalPrice, axios, dateRange, router, currentUser, loginModal,listing])
+    }, [totalPrice, dateRange, currentUser, loginModal,listing])
     useEffect(() => {
         if (dateRange.startDate && dateRange.endDate) {
             const dayCount = differenceInCalendarDays(

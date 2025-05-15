@@ -1,0 +1,8 @@
+services:
+  stripe-cli:
+    image: stripe/stripe-cli:latest
+    env_file:
+      - .env
+    command: listen --forward-to host.docker.internal:8080/api/stripe/webhook
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'

@@ -43,6 +43,14 @@ export class ReservationService {
         details: 'Listing ID is required!',
       });
     }
+    const $listing= this.listingClient.getListingById({listingId:createReservationDto.listingId})
+    const listing = await lastValueFrom($listing)
+    if(!listing){
+      throw new RpcException({
+        code: status.NOT_FOUND,
+        details: "Listing no longer exist"
+      })
+    }
     const $nameSrc = this.userClient.findUserByEmail({
       email: createReservationDto.userEmail!,
     });
@@ -60,7 +68,7 @@ export class ReservationService {
       this.emailService.sendConfirmationEmail({
         email: createReservationDto.userEmail!,
         name: user.name!,
-        propertyName: "This listing is no longer exist",
+        propertyName: listing.title,
         reservationNumber: reservation.id,
         checkInDate: format(new Date(reservation.startDate), 'MMM dd, yyyy'),
         checkOutDate: format(new Date(reservation.endDate), 'MMM dd, yyyy'),

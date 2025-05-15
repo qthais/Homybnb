@@ -1,21 +1,49 @@
 services:
   auth-service:
-    image: qthais/ms-auth-homybnb:1.0
+    build: 
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+    volumes:
+    - ./apps/auth:/app/apps/auth
+    - ./libs:/app/libs
+    - ./proto:/app/proto
+    # image: qthais/ms-auth-homybnb:latest
     env_file: apps/auth/.env
     expose:
       - 50051
   listing-service:
-    image: qthais/ms-listing-homybnb:2.0
+    build: 
+      context: .
+      dockerfile: ./apps/listing/Dockerfile
+    volumes:
+    - ./apps/listing:/app/apps/listing
+    - ./libs:/app/libs
+    - ./proto:/app/proto
+    # image: qthais/ms-listing-homybnb:latest
     env_file: apps/listing/.env
     expose:
       - 50052
   reservation-service:
-    image: qthais/ms-reservation-homybnb:1.0
+    build: 
+      context: .
+      dockerfile: ./apps/reservation/Dockerfile
+    volumes:
+    - ./apps/reservation:/app/apps/reservation
+    - ./libs:/app/libs
+    - ./proto:/app/proto
+    # image: qthais/ms-reservation-homybnb:latest
     env_file: apps/reservation/.env
     expose:
       - 50053
   apigateway:
-    image: ms-apigateway
+    build: 
+      context: .
+      dockerfile: ./apps/apigateway/Dockerfile
+    volumes:
+    - ./apps/apigateway:/app/apps/apigateway
+    - ./libs:/app/libs
+    - ./proto:/app/proto
+    # image: qthais/ms-apigateway-homybnb:latest
     env_file: apps/apigateway/.env   # if needed
     ports: [ "3000:3000" ]
     depends_on:
