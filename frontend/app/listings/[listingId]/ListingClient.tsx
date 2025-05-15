@@ -7,10 +7,8 @@ import ListingReservation from '@/app/components/listings/ListingReservation';
 import { categories } from '@/app/components/navbar/Categories';
 import useLoginModal from '@/app/hooks/useLoginModal';
 import { Listing, Reservation, SafeUser } from '@/types/SchemaType'
-import { useAuthenticatedAxios } from '@/utils/authenticatedAxiosClient';
 import { differenceInCalendarDays, eachDayOfInterval } from 'date-fns';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Range } from 'react-date-range';
 import toast from 'react-hot-toast';
@@ -34,9 +32,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
     currentUser
 }) => {
     const { data: session } = useSession()
-    const axios = useAuthenticatedAxios()
     const loginModal = useLoginModal()
-    const router = useRouter()
     const disableDates = useMemo(() => {
         let dates: Date[] = [];
         reservations.forEach((reservation) => {

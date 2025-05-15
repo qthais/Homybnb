@@ -61,6 +61,10 @@ describe('ReservationService', () => {
     service.onModuleInit();
   });
   it('should create a reservation', async () => {
+    const mockListing = {
+      id: 1,
+      title: 'Cozy House',
+    };
     const dto = {
       userId: 'u1',
       listingId: 1,
@@ -76,6 +80,7 @@ describe('ReservationService', () => {
       startDate: new Date(dto.startDate),
       endDate: new Date(dto.endDate),
     };
+    mockListingClient.getListingById.mockReturnValue(of(mockListing));
     mockPrismaService.reservation.create.mockResolvedValue(mockRes);
 
     const result = await service.createReservation(dto);
@@ -105,6 +110,24 @@ describe('ReservationService', () => {
       expect(err).toBeInstanceOf(RpcException);
       expect(err.getError().details).toBe('Listing ID is required!');
       expect(err.getError().code).toBe(status.INVALID_ARGUMENT);
+    }
+  });
+  it('should throw error if listing not found', async () => {
+    const dto = {
+      userId: 'u1',
+      userEmail: 'user@example.com',
+      listingId: 999, // nonexistent listing
+      startDate: '2025-01-01T00:00:00.000Z',
+      endDate: '2025-01-02T00:00:00.000Z',
+      totalPrice: 100,
+    };
+    mockListingClient.getListingById.mockReturnValue(of(null));
+    try {
+      await service.createReservation(dto);
+    } catch (err) {
+      expect(err).toBeInstanceOf(RpcException);
+      expect(err.getError().details).toBe('Listing no longer exist');
+      expect(err.getError().code).toBe(status.NOT_FOUND);
     }
   });
   it('should throw error if reservationId is missing in getReservationById', async () => {
