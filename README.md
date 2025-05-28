@@ -8,7 +8,7 @@ Homybnb is a modern, scalable short-term rental platform inspired by Airbnb. It 
 
 ## 🌐 Live Demo
 
-- **Docker**: [Demo with Docker Compose](https://drive.google.com/file/d/1SaHtcQZPBcWwszrJFD0rV9coEd_J9l2J/view?usp=sharing)
+- **Docker**: [Demo with Docker Compose](https://drive.google.com/file/d/1s774llB1IfXAkFIz5lYs7H-qYhCmyVCF/view?usp=sharing)
 - **Kubernetes**: [Demo with Kubernetes on AWS](https://drive.google.com/file/d/1_Qj-RAC949KyvAMnVrMy4p49T_ml5BQN/view?usp=sharing)
 ---
 
@@ -55,8 +55,9 @@ Homybnb uses a hybrid authentication system combining **NextAuth.js** (on the Ne
 - 🧾 **Manage Bookings** – Hosts can view, accept, or reject reservations for their listings  
 - ❌ **Delete Listings** – Remove owned properties from the platform  
 - 🧑‍💼 **Host & Guest Roles** – Role-based features for property owners and guests  
+- 📧 **Email Service** – Automated email notifications for booking confirmations, cancellations, and reminders
+- 💳 **Payment Integration** – Secure online payment processing with support for multiple payment methods
 - 📱 **Responsive UI** – Works beautifully across mobile, tablet, and desktop
-
 
 ---
 

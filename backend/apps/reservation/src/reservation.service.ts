@@ -147,7 +147,7 @@ export class ReservationService {
           new Date(deleteReservation.endDate),
           'MMM dd, yyyy',
         ),
-        propertyName: 'Test',
+        propertyName: 'This listing no longer exist',
         totalPrice: deleteReservation.totalPrice,
       });
       return { message: 'Cancel successfully' };
