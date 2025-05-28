@@ -99,6 +99,7 @@ export const authOptions: AuthOptions = {
       return `${clientUrl}/`; // Redirect to the client-side URL (e.g., localhost:8080)
     },
     async signIn({ user, account }) {
+      console.log({user,account})
       if (account?.provider !== "credentials") {
         try {
           const res = await axiosClient.post("api/auth/login/oauth", {

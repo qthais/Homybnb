@@ -18,10 +18,10 @@ import {EjsAdapter} from '@nestjs-modules/mailer/dist/adapters/ejs.adapter'
           }
         },
         defaults:{
-          from: 'Qtdemy'
+          from: 'Homybnb'
         },
         template:{
-          dir:resolve(process.cwd(), 'libs/common/src/email-templates'),
+          dir:resolve(__dirname,'../email-templates'),
           adapter:new EjsAdapter(),
           options:{
             strict:false

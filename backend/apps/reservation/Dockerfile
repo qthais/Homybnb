@@ -7,6 +7,7 @@ COPY nest-cli.json tsconfig*.json ./
 COPY apps/reservation ./apps/reservation
 COPY libs ./libs
 COPY proto ./proto
+COPY email-templates ./email-templates
 RUN npm run build reservation          
 
 FROM node:20-alpine

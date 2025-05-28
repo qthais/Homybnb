@@ -4,9 +4,7 @@
   "sourceRoot": "./",
   "entryFile": "src/main",
   "compilerOptions": {
-    "assets": [
-      "**/*.proto"
-    ],
+    "assets": ["**/*.proto"],
     "watchAssets": true,
     "deleteOutDir": true,
     "webpack": true,
@@ -22,9 +20,7 @@
       "sourceRoot": "./",
       "compilerOptions": {
         "tsConfigPath": "apps/apigateway/tsconfig.app.json",
-        "assets": [
-          "proto/*.proto"
-        ],
+        "assets": ["proto/*.proto"],
         "watchAssets": true
       }
     },
@@ -35,10 +31,7 @@
       "sourceRoot": "./",
       "compilerOptions": {
         "tsConfigPath": "apps/auth/tsconfig.app.json",
-        "assets": [
-          "proto/auth.proto",
-          "prisma/schema.prisma"
-        ],
+        "assets": ["proto/auth.proto", "prisma/schema.prisma"],
         "watchAssets": true
       }
     },
@@ -58,10 +51,7 @@
       "sourceRoot": "./",
       "compilerOptions": {
         "tsConfigPath": "apps/listing/tsconfig.app.json",
-        "assets": [
-          "proto/*.proto",
-          "prisma/schema.prisma"
-        ],
+        "assets": ["proto/*.proto", "prisma/schema.prisma"],
         "watchAssets": true
       }
     },
@@ -74,7 +64,11 @@
         "tsConfigPath": "apps/reservation/tsconfig.app.json",
         "assets": [
           "proto/*.proto",
-          "prisma/schema.prisma"
+          "prisma/schema.prisma",
+          {
+            "include": "email-templates",
+            "outDir": "dist/apps/reservation/email-templates"
+          }
         ],
         "watchAssets": true
       }
