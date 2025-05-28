@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Homybnb Reservation Cancellation</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #ffffff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .email-header {
+        background-color: #d9534f;
+        color: #ffffff;
+        padding: 24px;
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+      }
+
+      .email-body {
+        padding: 24px;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      .email-body p {
+        margin-bottom: 16px;
+      }
+
+      .email-details {
+        margin: 20px 0;
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      .email-details td {
+        padding: 8px 0;
+      }
+
+      .label {
+        font-weight: bold;
+        width: 160px;
+        vertical-align: top;
+      }
+
+      .email-footer {
+        background-color: #fafafa;
+        padding: 16px 24px;
+        text-align: center;
+        font-size: 14px;
+        color: #777;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .email-container {
+          margin: 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="email-container">
+      <div class="email-header">
+        Your Homybnb Reservation Has Been Cancelled
+      </div>
+
+      <div class="email-body">
+        <p>Hi <%= name %>,</p>
+
+        <p>We're writing to confirm that your reservation has been cancelled.</p>
+
+        <p>Here are the details of the cancelled booking:</p>
+
+        <table class="email-details">
+          <tr>
+            <td class="label">Reservation Number:</td>
+            <td><%= reservationNumber %></td>
+          </tr>
+          <tr>
+            <td class="label">Property:</td>
+            <td><%= propertyName %></td>
+          </tr>
+          <tr>
+            <td class="label">Check-in Date:</td>
+            <td><%= checkInDate %></td>
+          </tr>
+          <tr>
+            <td class="label">Check-out Date:</td>
+            <td><%= checkOutDate %></td>
+          </tr>
+          <tr>
+            <td class="label">Total Price Refunded:</td>
+            <td>$<%= totalPrice.toFixed ? totalPrice.toFixed(2) : totalPrice %> $</td>
+          </tr>
+        </table>
+
+        <p>If this was a mistake or you need help rebooking, we're here to help.</p>
+
+        <p>We hope to host you again in the future!</p>
+      </div>
+
+      <div class="email-footer">
+        Need help? Contact <a href="mailto:support@homybnb.com">support@homybnb.com</a>
+      </div>
+    </div>
+  </body>
+</html>
