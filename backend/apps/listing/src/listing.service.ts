@@ -11,6 +11,7 @@ import {
   RESERVATION_PACKAGE_NAME,
   RESERVATION_SERVICE_NAME,
   ReservationServiceClient,
+  UpdateListingDto,
   USER_SERVICE_NAME,
   UserServiceClient,
 } from '@app/common';
@@ -323,7 +324,7 @@ export class ListingService implements OnModuleInit {
         createdAt: 'desc',
       },
     });
-    const cleanedListing=listings.map((listing) => cleanListing(listing))
+    const cleanedListing = listings.map((listing) => cleanListing(listing));
     if (startDate && endDate) {
       const listingsWithReservation = await Promise.all(
         listings.map(async (listingItem) => {
@@ -354,7 +355,7 @@ export class ListingService implements OnModuleInit {
         });
         return !hasConflict;
       });
-      return finalListing
+      return finalListing;
     }
     return cleanedListing;
   }
@@ -370,6 +371,37 @@ export class ListingService implements OnModuleInit {
     });
     return listings.map((listing) => cleanListing(listing));
   }
+
+  async updateListing(updateListingDto: UpdateListingDto) {
+    try {
+      const {listingId,userId,...updateDto} = updateListingDto;
+      if (!listingId) {
+        throw new RpcException({
+          code: status.INVALID_ARGUMENT,
+          details: 'Listing ID is required!',
+        });
+      }
+      const updateListing = await this.prismaService.listing.update({
+        where: {
+          id: listingId,
+        },
+        data: updateDto,
+      });
+      return cleanListing(updateListing);
+    } catch (error) {
+      console.log(error);
+      // Handle Prisma errors
+      if (error instanceof RpcException) {
+        throw error;
+      }
+
+      throw new RpcException({
+        code: status.INTERNAL,
+        details: 'Failed to update listing',
+      });
+    }
+  }
+
   async deleteListing(deleteListingDto: DeleteListingDto) {
     try {
       const { listingId, userId } = deleteListingDto;
@@ -401,7 +433,10 @@ export class ListingService implements OnModuleInit {
           id: listingId,
         },
       });
-      return { message: 'Listing and all associated reservations deleted successfully!' };
+      return {
+        message:
+          'Listing and all associated reservations deleted successfully!',
+      };
     } catch (error) {
       console.log(error);
       // Handle Prisma errors

@@ -7,6 +7,7 @@ import {
   LISTING_SERVICE_NAME,
   ListingIdDto,
   ListingServiceClient,
+  UpdateListingDto,
   UserIdDto,
 } from '@app/common';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
@@ -33,29 +34,36 @@ export class ListingService implements OnModuleInit {
     const res = await lastValueFrom($source);
     return res;
   }
-  async getListingById(listingIdDto:ListingIdDto) {
+  async getListingById(listingIdDto: ListingIdDto) {
     const $listingSource = this.listingClient.getListingById(listingIdDto);
     const listing = await lastValueFrom($listingSource);
     return listing;
   }
-  async getFavorites(getFavoritesDto:GetFavoritesDto){
+  async getFavorites(getFavoritesDto: GetFavoritesDto) {
     const $listingSource = this.listingClient.getFavorites(getFavoritesDto);
     const listing = await lastValueFrom($listingSource);
     return listing;
   }
-  async getListingOfUser(userIdDto:UserIdDto){
+  async getListingOfUser(userIdDto: UserIdDto) {
     const $listingSource = this.listingClient.getListingsOfUser(userIdDto);
     const listing = await lastValueFrom($listingSource);
     return listing;
   }
-  async deleteListing(deleteListingDto:DeleteListingDto){
+  async deleteListing(deleteListingDto: DeleteListingDto) {
     const $source = this.listingClient.deleteListing(deleteListingDto);
     const res = await lastValueFrom($source);
-    return res
+    return res;
   }
-  async getListingsByOption(getListingsByOptionDto:GetListingsByOptionDto){
-    const $source= this.listingClient.getListingsByOption(getListingsByOptionDto)
-    const listings = await lastValueFrom($source)
-    return listings
+  async getListingsByOption(getListingsByOptionDto: GetListingsByOptionDto) {
+    const $source = this.listingClient.getListingsByOption(
+      getListingsByOptionDto,
+    );
+    const listings = await lastValueFrom($source);
+    return listings;
+  }
+  async updateListing(updateListingDto: UpdateListingDto) {
+    const $source = this.listingClient.updateListing(updateListingDto);
+    const listing = await lastValueFrom($source);
+    return listing;
   }
 }

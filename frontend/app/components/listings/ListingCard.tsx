@@ -14,12 +14,16 @@ interface ListingCardProps {
     disabled?: boolean;
     actionLabel?: string;
     actionId?: number;
+    onSecondAction?: (id: number) => void;
+    secondActionLabel?: string;
     currentUser?: SafeUser | null
 }
 const ListingCard: React.FC<ListingCardProps> = ({
     data,
     reservation,
     onAction,
+    onSecondAction,
+    secondActionLabel,
     disabled,
     actionLabel,
     actionId,
@@ -35,6 +39,13 @@ const ListingCard: React.FC<ListingCardProps> = ({
         }
         onAction?.(actionId!);
     }, [onAction, actionId, disabled])
+    const handleUpdate=useCallback((e:React.MouseEvent<HTMLButtonElement>)=>{
+        e.stopPropagation();
+        if(disabled){
+            return
+        }
+        onSecondAction?.(actionId!)
+    },[onSecondAction,actionId,disabled])
     const price = useMemo(() => {
         if (reservation) {
             return reservation.totalPrice
@@ -84,21 +95,30 @@ const ListingCard: React.FC<ListingCardProps> = ({
                     </div>
                 </div>
                 <div className="font-semibold text-lg">{location?.region},{location?.label}</div>
-                <div className="font-light text-neutral-500">{reservationDate||data.category}</div>
+                <div className="font-light text-neutral-500">{reservationDate || data.category}</div>
                 <div className='flex flex-row items-center gap-1'>
                     <div className="font-semibold">
                         ${price}
                     </div>
-                    {!reservation&&(
+                    {!reservation && (
                         <div className='font-light'>night</div>
                     )}
                 </div>
-                {onAction&&actionLabel&&(
+                {onSecondAction && secondActionLabel && (
                     <Button
-                    disabled={disabled}
-                    small
-                    label={actionLabel}
-                    onClick={handleCancel}
+                        disabled={disabled}
+                        small
+                        outline
+                        label={secondActionLabel}
+                        onClick={handleUpdate}
+                    />
+                )}
+                {onAction && actionLabel && (
+                    <Button
+                        disabled={disabled}
+                        small
+                        label={actionLabel}
+                        onClick={handleCancel}
                     />
                 )}
             </div>

@@ -82,6 +82,20 @@ export interface ListingResponseDto {
   reservations: ReservationDto[];
 }
 
+export interface UpdateListingDto {
+  title?: string | undefined;
+  description?: string | undefined;
+  imageSrc?: string | undefined;
+  category?: string | undefined;
+  roomCount?: number | undefined;
+  bathroomCount?: number | undefined;
+  guestCount?: number | undefined;
+  locationValue?: string | undefined;
+  price?: number | undefined;
+  listingId: number;
+  userId: string;
+}
+
 export interface ReservationDto {
   id: number;
   userId: string;
@@ -126,6 +140,8 @@ export interface ListingServiceClient {
   deleteListing(request: DeleteListingDto): Observable<DeleteResponseDto>;
 
   getListingsByOption(request: GetListingsByOptionDto): Observable<GetListingsResponseDto>;
+
+  updateListing(request: UpdateListingDto): Observable<ListingResponseDto>;
 }
 
 export interface ListingServiceController {
@@ -156,6 +172,10 @@ export interface ListingServiceController {
   getListingsByOption(
     request: GetListingsByOptionDto,
   ): Promise<GetListingsResponseDto> | Observable<GetListingsResponseDto> | GetListingsResponseDto;
+
+  updateListing(
+    request: UpdateListingDto,
+  ): Promise<ListingResponseDto> | Observable<ListingResponseDto> | ListingResponseDto;
 }
 
 export function ListingServiceControllerMethods() {
@@ -168,6 +188,7 @@ export function ListingServiceControllerMethods() {
       "getFavorites",
       "deleteListing",
       "getListingsByOption",
+      "updateListing",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

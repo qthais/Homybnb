@@ -11,14 +11,18 @@ import {
   ListingResponseDto,
   ListingServiceController,
   ListingServiceControllerMethods,
+  UpdateListingDto,
   UserIdDto,
 } from '@app/common';
-import { Observable } from 'rxjs';
 
 @Controller()
 @ListingServiceControllerMethods()
 export class ListingController implements ListingServiceController {
   constructor(private readonly listingService: ListingService) {}
+  async updateListing(updateListingDto: UpdateListingDto): Promise<ListingResponseDto> {
+    const updateListing= await this.listingService.updateListing(updateListingDto)
+    return updateListing
+  }
   async getListingsByOption(getListingsByOptionDto: GetListingsByOptionDto): Promise<GetListingsResponseDto>  {
     const listings= await this.listingService.getListingsByOption(getListingsByOptionDto)
     return {listings:listings}
