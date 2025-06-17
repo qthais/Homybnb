@@ -8,8 +8,8 @@ Homybnb is a modern, scalable short-term rental platform inspired by Airbnb. It 
 
 ## 🌐 Live Demo
 
-- **Docker**: [Demo with Docker Compose](https://drive.google.com/file/d/1s774llB1IfXAkFIz5lYs7H-qYhCmyVCF/view?usp=sharing)
-- **Kubernetes**: [Demo with Kubernetes on AWS](https://drive.google.com/file/d/1_Qj-RAC949KyvAMnVrMy4p49T_ml5BQN/view?usp=sharing)
+- **Docker**: [Demo with Docker Compose](https://drive.google.com/file/d/1s774llB1IfXAkFIz5lYs7H-qYhCmyVCF/view?usp=sharing) (This demo hasn't been added the update property functions)
+- **Kubernetes**: [Demo with Kubernetes on AWS](https://drive.google.com/file/d/1_Qj-RAC949KyvAMnVrMy4p49T_ml5BQN/view?usp=sharing) ( This demo hasn't been added the payment, update property functions)
 ---
 
 ## 🧰 Tech Stack
